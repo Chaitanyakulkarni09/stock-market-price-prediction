@@ -24,9 +24,17 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
+# CORS Configuration - Allow your frontend domains
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000", "http://localhost:5173"],
+    allow_origins=[
+        "http://localhost:3000",
+        "http://localhost:5173",
+        "https://stock-market-price-prediction-eight.vercel.app",
+        "https://stock-market-price-prediction-96z4be7nu.vercel.app",
+        "https://stock-market-price-prediction.vercel.app",
+        "https://*.vercel.app"  # Allow all Vercel preview deployments
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
