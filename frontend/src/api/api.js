@@ -1,6 +1,7 @@
 import axios from 'axios'
 
-const BASE = 'http://localhost:8000'
+// 🔥 CHANGE THIS LINE - Use your live backend URL
+const BASE = 'https://stock-market-price-prediction-1.onrender.com'
 
 const api = axios.create({ baseURL: BASE, timeout: 15000 })
 
