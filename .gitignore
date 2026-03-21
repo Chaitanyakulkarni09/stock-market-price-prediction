@@ -1,11 +1,36 @@
-﻿node_modules/
+﻿# Dependencies
+node_modules/
+
+# Environment variables (sensitive)
 .env
+.env.local
+.env*.local
+backend/.env
+
+# Python
 __pycache__/
 *.pyc
-.DS_Store
+*.pyo
+*.pyd
 venv/
 backend/venv/
+.venv/
+
+# Build outputs
 frontend/dist/
 frontend/.vite/
 dist/
 build/
+
+# Vercel
+.vercel
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/settings.json
+
+# ML model files (large binary files — regenerate with ml/train.py)
+backend/ml/models/*.pkl
