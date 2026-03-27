@@ -17,17 +17,12 @@ def get_prediction(
     Predict next-day closing price.
     Usage: GET /api/predict/?symbol=RELIANCE.NS
     """
+    result = predict_price(symbol.upper())
     try:
-        result = predict_price(symbol.upper())
-        try:
-            db_service.save_prediction(db, result)
-        except Exception:
-            pass
-        return result
-    except ValueError as e:
-        raise HTTPException(status_code=404, detail=str(e))
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Prediction failed: {e}")
+        db_service.save_prediction(db, result)
+    except Exception:
+        pass  # DB save is optional — never block the prediction response
+    return result
 
 
 @router.get("/history", response_model=list[dict])
