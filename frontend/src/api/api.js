@@ -1,6 +1,8 @@
 import axios from 'axios'
 
-const BASE = 'http://localhost:8000'
+// Uses VITE_API_URL env var in production (set in Vercel dashboard)
+// Falls back to localhost for local development
+const BASE = import.meta.env.VITE_API_URL || 'http://localhost:8000'
 
 const api = axios.create({ baseURL: BASE, timeout: 15000 })
 
