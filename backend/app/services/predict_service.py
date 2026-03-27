@@ -78,16 +78,16 @@ FEATURE_COLUMNS = [
 ]
 
 SYMBOL_TO_MODEL = {
-    "HDFCBANK.NS":   "HDFCBANK_price",
-    "HINDUNILVR.NS": "HINDUNILVR_price",
-    "INFY.NS":       "INFY_price",
-    "MARUTI.NS":     "MARUTI_price",
-    "RELIANCE.NS":   "RELIANCE_price",
-    "^NSEI":         "NIFTY_return",
-    "^BSESN":        "SENSEX_return",
+    "HDFCBANK.NS":   "HDFCBANK.NS",
+    "HINDUNILVR.NS": "HINDUNILVR.NS",
+    "INFY.NS":       "INFY.NS",
+    "MARUTI.NS":     "MARUTI.NS",
+    "RELIANCE.NS":   "RELIANCE.NS",
+    "^NSEI":         "^NSEI",
+    "^BSESN":        "^BSESN",
 }
 
-INDEX_SYMBOLS = {"^NSEI", "^BSESN"}
+INDEX_SYMBOLS = set()  # new models are all price-based, no special index handling needed
 
 
 def _get_model_features(model_key: str) -> list:
@@ -163,6 +163,7 @@ def predict_price(symbol: str) -> PredictionResponse:
             if df.empty:
                 return _fallback_response(symbol, current_price, False)
             df = engineer_features(df)
+            df = df.replace([float('inf'), float('-inf')], pd.NA)
             df = df.dropna(subset=["Close"])
             if df.empty:
                 return _fallback_response(symbol, current_price, False)

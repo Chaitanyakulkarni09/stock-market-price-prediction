@@ -64,6 +64,7 @@ def train_symbol(symbol: str):
         return
 
     df = engineer_features(df)
+    df = df.replace([float('inf'), float('-inf')], pd.NA)
     df = df.dropna(subset=FEATURE_COLUMNS + [TARGET_COLUMN])
 
     X = df[FEATURE_COLUMNS].values
