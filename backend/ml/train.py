@@ -5,7 +5,9 @@ Run from backend/ directory:
 """
 
 import joblib
-import yfinance as yf
+import httpx
+import pandas as pd
+from datetime import datetime, timezone
 from pathlib import Path
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.model_selection import train_test_split
@@ -21,12 +23,41 @@ SYMBOLS = [
 MODELS_DIR = Path(__file__).parent / "models"
 MODELS_DIR.mkdir(exist_ok=True)
 
+_HEADERS = {
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
+                  "(KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+    "Accept": "application/json",
+    "Referer": "https://finance.yahoo.com",
+}
+
+
+def fetch_history(symbol: str, range_: str = "2y") -> pd.DataFrame:
+    url = f"https://query1.finance.yahoo.com/v8/finance/chart/{symbol}"
+    params = {"range": range_, "interval": "1d", "includePrePost": "false"}
+    with httpx.Client(headers=_HEADERS, timeout=30, follow_redirects=True) as client:
+        r = client.get(url, params=params)
+        r.raise_for_status()
+        data = r.json()
+    result = data.get("chart", {}).get("result", [])
+    if not result:
+        return pd.DataFrame()
+    res = result[0]
+    timestamps = res.get("timestamp", [])
+    quote = res.get("indicators", {}).get("quote", [{}])[0]
+    df = pd.DataFrame({
+        "Date":   [datetime.fromtimestamp(t, tz=timezone.utc).replace(tzinfo=None) for t in timestamps],
+        "Open":   quote.get("open",   [None] * len(timestamps)),
+        "High":   quote.get("high",   [None] * len(timestamps)),
+        "Low":    quote.get("low",    [None] * len(timestamps)),
+        "Close":  quote.get("close",  [None] * len(timestamps)),
+        "Volume": quote.get("volume", [0]    * len(timestamps)),
+    })
+    return df.dropna(subset=["Close"]).reset_index(drop=True)
+
 
 def train_symbol(symbol: str):
     print(f"\n[TRAIN] Fetching data for {symbol}...")
-    ticker = yf.Ticker(symbol)
-    df = ticker.history(period="2y")
-    df = df.reset_index()
+    df = fetch_history(symbol, range_="2y")
 
     if df.empty or len(df) < 60:
         print(f"[SKIP] Not enough data for {symbol}")

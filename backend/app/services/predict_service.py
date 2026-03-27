@@ -3,27 +3,14 @@ import random
 import pandas as pd
 from datetime import datetime
 from pathlib import Path
-import yfinance as yf
-import requests
-from requests.adapters import HTTPAdapter
-from urllib3.util.retry import Retry
+import httpx
 
 from app.schemas.prediction import PredictionResponse
-from app.services.stock_service import fetch_latest_dataframe
+from app.services.stock_service import fetch_latest_dataframe, _yahoo_chart, _parse_chart, _safe_float
 
 MODELS_DIR = Path(__file__).resolve().parents[2] / "ml" / "models"
 
 _model_registry: dict = {}
-
-
-def _make_yf_session():
-    """Create a requests session with retries for yfinance calls on Render."""
-    session = requests.Session()
-    retry = Retry(total=3, backoff_factor=1, status_forcelist=[429, 500, 502, 503, 504])
-    adapter = HTTPAdapter(max_retries=retry)
-    session.mount("https://", adapter)
-    session.headers.update({"User-Agent": "Mozilla/5.0"})
-    return session
 
 
 def load_all_models():
@@ -44,21 +31,13 @@ def load_all_models():
 
 
 def get_current_price(symbol: str):
-    """Fetch latest closing price using yfinance with retry session."""
+    """Fetch latest closing price via direct Yahoo Finance API."""
     try:
-        session = _make_yf_session()
-        ticker = yf.Ticker(symbol, session=session)
-        df = ticker.history(period="5d", timeout=20)
-        if df is None or df.empty:
-            print(f"[PRICE ERROR] {symbol}: empty dataframe")
-            return None
-        if isinstance(df.columns, pd.MultiIndex):
-            df.columns = [col[0] if isinstance(col, tuple) else col for col in df.columns]
-        df = df.dropna(subset=["Close"])
+        data = _yahoo_chart(symbol, range_="5d", interval="1d")
+        df   = _parse_chart(data, symbol)
         if df.empty:
-            print(f"[PRICE ERROR] {symbol}: no valid Close values")
             return None
-        return round(float(df["Close"].iloc[-1]), 2)
+        return round(_safe_float(df["Close"].iloc[-1]), 2)
     except Exception as e:
         print(f"[PRICE ERROR] {symbol}: {e}")
         return None
