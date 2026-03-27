@@ -25,18 +25,22 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
-# Build allowed origins — always include localhost, add FRONTEND_URL from env if set
+# Build allowed origins list
 _origins = [
     "http://localhost:3000",
     "http://localhost:5173",
 ]
-_frontend_url = os.getenv("FRONTEND_URL", "")
-if _frontend_url:
-    _origins.append(_frontend_url.rstrip("/"))
+# Add any extra frontend URLs from env (comma-separated)
+_extra = os.getenv("FRONTEND_URL", "")
+for _url in _extra.split(","):
+    _url = _url.strip().rstrip("/")
+    if _url:
+        _origins.append(_url)
 
 app.add_middleware(
     CORSMiddleware,
     allow_origins=_origins,
+    allow_origin_regex=r"https://.*\.vercel\.app",  # allow ALL vercel.app subdomains
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
