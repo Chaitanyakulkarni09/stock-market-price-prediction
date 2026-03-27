@@ -1,5 +1,8 @@
 import yfinance as yf
 import pandas as pd
+import requests
+from requests.adapters import HTTPAdapter
+from urllib3.util.retry import Retry
 from datetime import timezone
 from app.schemas.stock import OHLCVPoint, StockHistoryResponse, StockQuote
 
@@ -7,6 +10,16 @@ SUPPORTED_SYMBOLS = [
     "HDFCBANK.NS", "HINDUNILVR.NS", "MARUTI.NS",
     "RELIANCE.NS", "INFY.NS", "^NSEI", "^BSESN"
 ]
+
+
+def _make_session():
+    """Requests session with retries — needed for yfinance on Render."""
+    session = requests.Session()
+    retry = Retry(total=3, backoff_factor=1, status_forcelist=[429, 500, 502, 503, 504])
+    adapter = HTTPAdapter(max_retries=retry)
+    session.mount("https://", adapter)
+    session.headers.update({"User-Agent": "Mozilla/5.0"})
+    return session
 
 
 def _safe_float(val, default=0.0) -> float:
@@ -32,8 +45,8 @@ def _strip_tz(dt) -> "datetime":
 
 def fetch_history(symbol: str, period: str = "6mo") -> StockHistoryResponse:
     """Fetch OHLCV history from yfinance."""
-    ticker = yf.Ticker(symbol)
-    df = ticker.history(period=period)
+    ticker = yf.Ticker(symbol, session=_make_session())
+    df = ticker.history(period=period, timeout=20)
 
     if df is None or df.empty:
         raise ValueError(f"No data found for symbol: {symbol}")
@@ -74,9 +87,8 @@ def fetch_history(symbol: str, period: str = "6mo") -> StockHistoryResponse:
 
 def fetch_quote(symbol: str) -> StockQuote:
     """Fetch latest quote for a symbol."""
-    ticker = yf.Ticker(symbol)
-    # Use 5d to ensure we always get at least 2 rows (handles weekends/holidays)
-    df = ticker.history(period="5d")
+    ticker = yf.Ticker(symbol, session=_make_session())
+    df = ticker.history(period="5d", timeout=20)
 
     if df is None or df.empty:
         raise ValueError(f"No quote data for symbol: {symbol}")
@@ -112,8 +124,8 @@ def fetch_quote(symbol: str) -> StockQuote:
 def fetch_latest_dataframe(symbol: str, days: int = 60) -> pd.DataFrame:
     """Return raw DataFrame for ML feature engineering."""
     try:
-        ticker = yf.Ticker(symbol)
-        df = ticker.history(period="3mo")
+        ticker = yf.Ticker(symbol, session=_make_session())
+        df = ticker.history(period="3mo", timeout=20)
         if df is None or df.empty:
             return pd.DataFrame()
         # Flatten MultiIndex columns (newer yfinance versions)

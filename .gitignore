@@ -33,5 +33,6 @@ Thumbs.db
 # IDE
 .vscode/settings.json
 
-# ML model files (large binary — regenerate with: python -m ml.train)
-backend/ml/models/*.pkl
+# ML model files — committed to repo so Render deployment has them
+# To retrain: python -m ml.train (from backend/ folder)
+# backend/ml/models/*.pkl
