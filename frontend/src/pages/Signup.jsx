@@ -11,6 +11,7 @@ export default function Signup() {
   const [showPw, setShowPw] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+  const [slow, setSlow] = useState(false)
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -24,13 +25,20 @@ export default function Signup() {
       return
     }
     setLoading(true)
+    setSlow(false)
+    const slowTimer = setTimeout(() => setSlow(true), 8000)
     try {
       await register(form.name, form.email, form.password)
       navigate('/')
     } catch (err) {
-      setError(err?.response?.data?.detail || 'Registration failed. Try again.')
+      const msg = err?.response?.data?.detail
+        || err?.message
+        || 'Registration failed. Make sure the backend is running.'
+      setError(msg)
     } finally {
+      clearTimeout(slowTimer)
       setLoading(false)
+      setSlow(false)
     }
   }
 
@@ -166,7 +174,7 @@ export default function Signup() {
               style={{ background: "linear-gradient(135deg, #3b82f6, #60a5fa)",
                        boxShadow: "0 4px 16px rgba(59,130,246,0.4)" }}
             >
-              {loading ? 'Creating account...' : 'Create Account'}
+              {loading ? (slow ? 'Waking up server (~30s)...' : 'Creating account...') : 'Create Account'}
             </motion.button>
           </form>
 

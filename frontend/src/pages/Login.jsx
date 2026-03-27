@@ -11,18 +11,26 @@ export default function Login() {
   const [showPw, setShowPw] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+  const [slow, setSlow] = useState(false)
 
   const handleSubmit = async (e) => {
     e.preventDefault()
     setError('')
     setLoading(true)
+    setSlow(false)
+    const slowTimer = setTimeout(() => setSlow(true), 8000)
     try {
       await login(form.email, form.password)
       navigate('/')
     } catch (err) {
-      setError(err?.response?.data?.detail || 'Login failed. Check your credentials.')
+      const msg = err?.response?.data?.detail
+        || err?.message
+        || 'Login failed. Check your credentials.'
+      setError(msg)
     } finally {
+      clearTimeout(slowTimer)
       setLoading(false)
+      setSlow(false)
     }
   }
 
@@ -114,7 +122,7 @@ export default function Login() {
               style={{ background: "linear-gradient(135deg, #3b82f6, #60a5fa)",
                        boxShadow: "0 4px 16px rgba(59,130,246,0.4)" }}
             >
-              {loading ? 'Signing in...' : 'Sign In'}
+              {loading ? (slow ? 'Waking up server (~30s)...' : 'Signing in...') : 'Sign In'}
             </motion.button>
           </form>
 

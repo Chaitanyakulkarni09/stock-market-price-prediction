@@ -4,7 +4,7 @@ import axios from 'axios'
 // Falls back to localhost for local development
 const BASE = import.meta.env.VITE_API_URL || 'http://localhost:8000'
 
-const api = axios.create({ baseURL: BASE, timeout: 15000 })
+const api = axios.create({ baseURL: BASE, timeout: 40000 }) // 40s — Render free tier needs ~30s to wake up
 
 // Attach JWT token on every request
 api.interceptors.request.use(config => {
