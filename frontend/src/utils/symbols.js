@@ -24,7 +24,7 @@ export const SYMBOL_MAP = {
   'POWERGRID.NS':  { display: 'Power Grid Corp',         short: 'POWERGRID',  sector: 'Utilities'     },
   // ── Auto ─────────────────────────────────────────────────────────────────
   'MARUTI.NS':     { display: 'Maruti Suzuki',           short: 'MARUTI',     sector: 'Auto'          },
-  'TATAMOTORS.NS': { display: 'Tata Motors',             short: 'TATAMOTORS', sector: 'Auto'          },
+  'BAJAJFINSV.NS': { display: 'Bajaj Finserv',           short: 'BAJAJFINSV', sector: 'Finance'       },
   'M&M.NS':        { display: 'Mahindra & Mahindra',     short: 'M&M',        sector: 'Auto'          },
   // ── FMCG ─────────────────────────────────────────────────────────────────
   'HINDUNILVR.NS': { display: 'Hindustan Unilever',      short: 'HUL',        sector: 'FMCG'          },

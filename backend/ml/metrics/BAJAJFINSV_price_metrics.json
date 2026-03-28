@@ -1,0 +1,26 @@
+{
+  "symbol": "BAJAJFINSV.NS",
+  "model_key": "BAJAJFINSV_price",
+  "best_params": {
+    "max_depth": 8,
+    "min_samples_split": 5,
+    "n_estimators": 100
+  },
+  "train_rows": 2909,
+  "val_rows": 248,
+  "test_rows": 244,
+  "val": {
+    "RMSE": 80.6091,
+    "MAE": 59.6177,
+    "MAPE": 4.3397,
+    "DA": 55.24
+  },
+  "test": {
+    "RMSE": 74.0476,
+    "MAE": 60.9808,
+    "MAPE": 4.3157,
+    "DA": 51.23
+  },
+  "trained_at": "2026-03-28T13:42:14.149074",
+  "status": "success"
+}

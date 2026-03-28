@@ -1,0 +1,26 @@
+{
+  "symbol": "AXISBANK.NS",
+  "model_key": "AXISBANK_price",
+  "best_params": {
+    "max_depth": 12,
+    "min_samples_split": 10,
+    "n_estimators": 100
+  },
+  "train_rows": 2910,
+  "val_rows": 248,
+  "test_rows": 244,
+  "val": {
+    "RMSE": 42.4017,
+    "MAE": 26.0846,
+    "MAPE": 3.1154,
+    "DA": 48.79
+  },
+  "test": {
+    "RMSE": 156.8082,
+    "MAE": 137.6948,
+    "MAPE": 13.9349,
+    "DA": 46.72
+  },
+  "trained_at": "2026-03-28T13:29:36.571877",
+  "status": "success"
+}

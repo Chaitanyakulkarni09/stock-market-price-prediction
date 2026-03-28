@@ -1,0 +1,691 @@
+{
+  "trained_at": "2026-03-28T13:33:35.200399",
+  "total_symbols": 27,
+  "successful": 26,
+  "failed": [
+    "TATAMOTORS.NS"
+  ],
+  "results": [
+    {
+      "symbol": "^NSEI",
+      "model_key": "NIFTY_return",
+      "best_params": {
+        "max_depth": 12,
+        "min_samples_split": 10,
+        "n_estimators": 100
+      },
+      "train_rows": 2892,
+      "val_rows": 248,
+      "test_rows": 244,
+      "val": {
+        "RMSE": 287.6786,
+        "MAE": 218.2367,
+        "MAPE": 1.2854,
+        "DA": 43.95
+      },
+      "test": {
+        "RMSE": 1289.7035,
+        "MAE": 949.4988,
+        "MAPE": 4.7843,
+        "DA": 43.85
+      },
+      "trained_at": "2026-03-28T13:26:51.443159",
+      "status": "success"
+    },
+    {
+      "symbol": "^BSESN",
+      "model_key": "SENSEX_return",
+      "best_params": {
+        "max_depth": 8,
+        "min_samples_split": 5,
+        "n_estimators": 100
+      },
+      "train_rows": 2899,
+      "val_rows": 248,
+      "test_rows": 244,
+      "val": {
+        "RMSE": 997.4195,
+        "MAE": 756.3837,
+        "MAPE": 1.3208,
+        "DA": 49.19
+      },
+      "test": {
+        "RMSE": 4458.5778,
+        "MAE": 3406.2056,
+        "MAPE": 5.1343,
+        "DA": 42.62
+      },
+      "trained_at": "2026-03-28T13:27:03.085096",
+      "status": "success"
+    },
+    {
+      "symbol": "TCS.NS",
+      "model_key": "TCS_price",
+      "best_params": {
+        "max_depth": 12,
+        "min_samples_split": 5,
+        "n_estimators": 200
+      },
+      "train_rows": 2910,
+      "val_rows": 248,
+      "test_rows": 244,
+      "val": {
+        "RMSE": 66.474,
+        "MAE": 49.8385,
+        "MAPE": 1.4821,
+        "DA": 49.6
+      },
+      "test": {
+        "RMSE": 56.5625,
+        "MAE": 44.6814,
+        "MAPE": 1.3286,
+        "DA": 54.51
+      },
+      "trained_at": "2026-03-28T13:27:16.751077",
+      "status": "success"
+    },
+    {
+      "symbol": "INFY.NS",
+      "model_key": "INFY_price",
+      "best_params": {
+        "max_depth": 12,
+        "min_samples_split": 10,
+        "n_estimators": 100
+      },
+      "train_rows": 2910,
+      "val_rows": 248,
+      "test_rows": 244,
+      "val": {
+        "RMSE": 65.3445,
+        "MAE": 53.8454,
+        "MAPE": 3.5135,
+        "DA": 54.03
+      },
+      "test": {
+        "RMSE": 54.5993,
+        "MAE": 41.7033,
+        "MAPE": 2.9823,
+        "DA": 52.05
+      },
+      "trained_at": "2026-03-28T13:27:30.024429",
+      "status": "success"
+    },
+    {
+      "symbol": "WIPRO.NS",
+      "model_key": "WIPRO_price",
+      "best_params": {
+        "max_depth": 12,
+        "min_samples_split": 10,
+        "n_estimators": 200
+      },
+      "train_rows": 2910,
+      "val_rows": 248,
+      "test_rows": 244,
+      "val": {
+        "RMSE": 17.7724,
+        "MAE": 16.2871,
+        "MAPE": 7.2689,
+        "DA": 47.98
+      },
+      "test": {
+        "RMSE": 16.8445,
+        "MAE": 16.3367,
+        "MAPE": 8.2834,
+        "DA": 47.95
+      },
+      "trained_at": "2026-03-28T13:27:44.720161",
+      "status": "success"
+    },
+    {
+      "symbol": "HCLTECH.NS",
+      "model_key": "HCLTECH_price",
+      "best_params": {
+        "max_depth": 12,
+        "min_samples_split": 5,
+        "n_estimators": 100
+      },
+      "train_rows": 2911,
+      "val_rows": 248,
+      "test_rows": 244,
+      "val": {
+        "RMSE": 48.5602,
+        "MAE": 42.6972,
+        "MAPE": 4.1902,
+        "DA": 50.0
+      },
+      "test": {
+        "RMSE": 45.9237,
+        "MAE": 31.3127,
+        "MAPE": 2.6131,
+        "DA": 51.64
+      },
+      "trained_at": "2026-03-28T13:28:00.877923",
+      "status": "success"
+    },
+    {
+      "symbol": "TECHM.NS",
+      "model_key": "TECHM_price",
+      "best_params": {
+        "max_depth": 12,
+        "min_samples_split": 10,
+        "n_estimators": 200
+      },
+      "train_rows": 2910,
+      "val_rows": 248,
+      "test_rows": 244,
+      "val": {
+        "RMSE": 74.9053,
+        "MAE": 60.2305,
+        "MAPE": 5.1659,
+        "DA": 46.37
+      },
+      "test": {
+        "RMSE": 64.0732,
+        "MAE": 55.2818,
+        "MAPE": 4.9198,
+        "DA": 48.36
+      },
+      "trained_at": "2026-03-28T13:28:18.245924",
+      "status": "success"
+    },
+    {
+      "symbol": "HDFCBANK.NS",
+      "model_key": "HDFCBANK_price",
+      "best_params": {
+        "max_depth": 12,
+        "min_samples_split": 10,
+        "n_estimators": 200
+      },
+      "train_rows": 2910,
+      "val_rows": 248,
+      "test_rows": 244,
+      "val": {
+        "RMSE": 15.8873,
+        "MAE": 11.8018,
+        "MAPE": 1.6579,
+        "DA": 56.85
+      },
+      "test": {
+        "RMSE": 10.3767,
+        "MAE": 7.8281,
+        "MAPE": 0.9663,
+        "DA": 47.95
+      },
+      "trained_at": "2026-03-28T13:28:32.838238",
+      "status": "success"
+    },
+    {
+      "symbol": "ICICIBANK.NS",
+      "model_key": "ICICIBANK_price",
+      "best_params": {
+        "max_depth": 8,
+        "min_samples_split": 5,
+        "n_estimators": 200
+      },
+      "train_rows": 2910,
+      "val_rows": 248,
+      "test_rows": 244,
+      "val": {
+        "RMSE": 81.0135,
+        "MAE": 58.2403,
+        "MAPE": 6.6427,
+        "DA": 53.23
+      },
+      "test": {
+        "RMSE": 161.0614,
+        "MAE": 153.8579,
+        "MAPE": 16.3586,
+        "DA": 48.36
+      },
+      "trained_at": "2026-03-28T13:28:47.976983",
+      "status": "success"
+    },
+    {
+      "symbol": "SBIN.NS",
+      "model_key": "SBIN_price",
+      "best_params": {
+        "max_depth": 12,
+        "min_samples_split": 10,
+        "n_estimators": 100
+      },
+      "train_rows": 2910,
+      "val_rows": 248,
+      "test_rows": 244,
+      "val": {
+        "RMSE": 52.059,
+        "MAE": 36.5518,
+        "MAPE": 6.4684,
+        "DA": 47.58
+      },
+      "test": {
+        "RMSE": 86.3753,
+        "MAE": 81.7586,
+        "MAPE": 14.0191,
+        "DA": 43.03
+      },
+      "trained_at": "2026-03-28T13:29:04.416369",
+      "status": "success"
+    },
+    {
+      "symbol": "KOTAKBANK.NS",
+      "model_key": "KOTAKBANK_price",
+      "best_params": {
+        "max_depth": 12,
+        "min_samples_split": 10,
+        "n_estimators": 100
+      },
+      "train_rows": 2910,
+      "val_rows": 248,
+      "test_rows": 244,
+      "val": {
+        "RMSE": 6.0914,
+        "MAE": 4.7831,
+        "MAPE": 1.3101,
+        "DA": 52.42
+      },
+      "test": {
+        "RMSE": 4.3341,
+        "MAE": 3.2664,
+        "MAPE": 0.8998,
+        "DA": 53.28
+      },
+      "trained_at": "2026-03-28T13:29:20.623136",
+      "status": "success"
+    },
+    {
+      "symbol": "AXISBANK.NS",
+      "model_key": "AXISBANK_price",
+      "best_params": {
+        "max_depth": 12,
+        "min_samples_split": 10,
+        "n_estimators": 100
+      },
+      "train_rows": 2910,
+      "val_rows": 248,
+      "test_rows": 244,
+      "val": {
+        "RMSE": 42.4017,
+        "MAE": 26.0846,
+        "MAPE": 3.1154,
+        "DA": 48.79
+      },
+      "test": {
+        "RMSE": 156.8082,
+        "MAE": 137.6948,
+        "MAPE": 13.9349,
+        "DA": 46.72
+      },
+      "trained_at": "2026-03-28T13:29:36.571877",
+      "status": "success"
+    },
+    {
+      "symbol": "BAJFINANCE.NS",
+      "model_key": "BAJFINANCE_price",
+      "best_params": {
+        "max_depth": 8,
+        "min_samples_split": 10,
+        "n_estimators": 200
+      },
+      "train_rows": 2910,
+      "val_rows": 248,
+      "test_rows": 244,
+      "val": {
+        "RMSE": 25.9353,
+        "MAE": 18.4141,
+        "MAPE": 2.8869,
+        "DA": 52.02
+      },
+      "test": {
+        "RMSE": 23.7085,
+        "MAE": 17.1041,
+        "MAPE": 2.6623,
+        "DA": 48.36
+      },
+      "trained_at": "2026-03-28T13:29:53.289311",
+      "status": "success"
+    },
+    {
+      "symbol": "RELIANCE.NS",
+      "model_key": "RELIANCE_price",
+      "best_params": {
+        "max_depth": 8,
+        "min_samples_split": 5,
+        "n_estimators": 200
+      },
+      "train_rows": 2910,
+      "val_rows": 248,
+      "test_rows": 244,
+      "val": {
+        "RMSE": 33.2609,
+        "MAE": 24.586,
+        "MAPE": 2.0618,
+        "DA": 51.61
+      },
+      "test": {
+        "RMSE": 40.3339,
+        "MAE": 28.4497,
+        "MAPE": 2.3434,
+        "DA": 49.18
+      },
+      "trained_at": "2026-03-28T13:30:10.581023",
+      "status": "success"
+    },
+    {
+      "symbol": "ONGC.NS",
+      "model_key": "ONGC_price",
+      "best_params": {
+        "max_depth": 8,
+        "min_samples_split": 10,
+        "n_estimators": 100
+      },
+      "train_rows": 2910,
+      "val_rows": 248,
+      "test_rows": 244,
+      "val": {
+        "RMSE": 3.8501,
+        "MAE": 2.7551,
+        "MAPE": 1.8427,
+        "DA": 47.98
+      },
+      "test": {
+        "RMSE": 2.4327,
+        "MAE": 1.8509,
+        "MAPE": 1.0888,
+        "DA": 47.54
+      },
+      "trained_at": "2026-03-28T13:30:27.191324",
+      "status": "success"
+    },
+    {
+      "symbol": "NTPC.NS",
+      "model_key": "NTPC_price",
+      "best_params": {
+        "max_depth": 8,
+        "min_samples_split": 10,
+        "n_estimators": 200
+      },
+      "train_rows": 2910,
+      "val_rows": 248,
+      "test_rows": 244,
+      "val": {
+        "RMSE": 2.7305,
+        "MAE": 2.1172,
+        "MAPE": 1.3833,
+        "DA": 45.97
+      },
+      "test": {
+        "RMSE": 47.3052,
+        "MAE": 30.9364,
+        "MAPE": 12.5576,
+        "DA": 44.67
+      },
+      "trained_at": "2026-03-28T13:30:43.637267",
+      "status": "success"
+    },
+    {
+      "symbol": "POWERGRID.NS",
+      "model_key": "POWERGRID_price",
+      "best_params": {
+        "max_depth": 12,
+        "min_samples_split": 10,
+        "n_estimators": 100
+      },
+      "train_rows": 2910,
+      "val_rows": 248,
+      "test_rows": 244,
+      "val": {
+        "RMSE": 10.5663,
+        "MAE": 8.3666,
+        "MAPE": 4.9577,
+        "DA": 50.81
+      },
+      "test": {
+        "RMSE": 36.0381,
+        "MAE": 30.2097,
+        "MAPE": 15.33,
+        "DA": 44.67
+      },
+      "trained_at": "2026-03-28T13:30:58.129902",
+      "status": "success"
+    },
+    {
+      "symbol": "MARUTI.NS",
+      "model_key": "MARUTI_price",
+      "best_params": {
+        "max_depth": 12,
+        "min_samples_split": 10,
+        "n_estimators": 200
+      },
+      "train_rows": 2909,
+      "val_rows": 248,
+      "test_rows": 244,
+      "val": {
+        "RMSE": 154.6062,
+        "MAE": 112.2024,
+        "MAPE": 1.3563,
+        "DA": 52.42
+      },
+      "test": {
+        "RMSE": 588.2763,
+        "MAE": 411.504,
+        "MAPE": 4.0421,
+        "DA": 54.1
+      },
+      "trained_at": "2026-03-28T13:31:13.414789",
+      "status": "success"
+    },
+    {
+      "symbol": "TATAMOTORS.NS",
+      "status": "error",
+      "error": "Client error '404 Not Found' for url 'https://query1.finance.yahoo.com/v8/finance/chart/TATAMOTORS.NS?period1=1262304000&period2=1703980800&interval=1d&includePrePost=false'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/404"
+    },
+    {
+      "symbol": "M&M.NS",
+      "model_key": "MM_price",
+      "best_params": {
+        "max_depth": 8,
+        "min_samples_split": 10,
+        "n_estimators": 200
+      },
+      "train_rows": 2910,
+      "val_rows": 248,
+      "test_rows": 244,
+      "val": {
+        "RMSE": 214.4189,
+        "MAE": 161.5812,
+        "MAPE": 13.1573,
+        "DA": 47.18
+      },
+      "test": {
+        "RMSE": 492.5063,
+        "MAE": 466.6479,
+        "MAPE": 31.8566,
+        "DA": 44.67
+      },
+      "trained_at": "2026-03-28T13:31:35.688213",
+      "status": "success"
+    },
+    {
+      "symbol": "HINDUNILVR.NS",
+      "model_key": "HINDUNILVR_price",
+      "best_params": {
+        "max_depth": 12,
+        "min_samples_split": 5,
+        "n_estimators": 100
+      },
+      "train_rows": 2910,
+      "val_rows": 248,
+      "test_rows": 244,
+      "val": {
+        "RMSE": 49.7713,
+        "MAE": 40.445,
+        "MAPE": 1.6724,
+        "DA": 48.39
+      },
+      "test": {
+        "RMSE": 39.8887,
+        "MAE": 31.31,
+        "MAPE": 1.2171,
+        "DA": 55.74
+      },
+      "trained_at": "2026-03-28T13:31:50.025128",
+      "status": "success"
+    },
+    {
+      "symbol": "ITC.NS",
+      "model_key": "ITC_price",
+      "best_params": {
+        "max_depth": 12,
+        "min_samples_split": 10,
+        "n_estimators": 200
+      },
+      "train_rows": 2910,
+      "val_rows": 248,
+      "test_rows": 244,
+      "val": {
+        "RMSE": 7.4907,
+        "MAE": 5.1627,
+        "MAPE": 1.7518,
+        "DA": 54.44
+      },
+      "test": {
+        "RMSE": 97.3687,
+        "MAE": 89.971,
+        "MAPE": 21.3398,
+        "DA": 45.49
+      },
+      "trained_at": "2026-03-28T13:32:08.648015",
+      "status": "success"
+    },
+    {
+      "symbol": "NESTLEIND.NS",
+      "model_key": "NESTLEIND_price",
+      "best_params": {
+        "max_depth": 12,
+        "min_samples_split": 5,
+        "n_estimators": 100
+      },
+      "train_rows": 2910,
+      "val_rows": 248,
+      "test_rows": 244,
+      "val": {
+        "RMSE": 17.9018,
+        "MAE": 14.2143,
+        "MAPE": 1.5145,
+        "DA": 50.81
+      },
+      "test": {
+        "RMSE": 142.3557,
+        "MAE": 116.0197,
+        "MAPE": 10.0306,
+        "DA": 51.64
+      },
+      "trained_at": "2026-03-28T13:32:26.996478",
+      "status": "success"
+    },
+    {
+      "symbol": "SUNPHARMA.NS",
+      "model_key": "SUNPHARMA_price",
+      "best_params": {
+        "max_depth": 12,
+        "min_samples_split": 10,
+        "n_estimators": 200
+      },
+      "train_rows": 2910,
+      "val_rows": 248,
+      "test_rows": 244,
+      "val": {
+        "RMSE": 18.1727,
+        "MAE": 14.0972,
+        "MAPE": 1.5324,
+        "DA": 46.37
+      },
+      "test": {
+        "RMSE": 43.5561,
+        "MAE": 30.0755,
+        "MAPE": 2.7189,
+        "DA": 49.59
+      },
+      "trained_at": "2026-03-28T13:32:45.424914",
+      "status": "success"
+    },
+    {
+      "symbol": "TITAN.NS",
+      "model_key": "TITAN_price",
+      "best_params": {
+        "max_depth": 8,
+        "min_samples_split": 10,
+        "n_estimators": 200
+      },
+      "train_rows": 2910,
+      "val_rows": 248,
+      "test_rows": 244,
+      "val": {
+        "RMSE": 123.9797,
+        "MAE": 103.4646,
+        "MAPE": 4.1956,
+        "DA": 53.63
+      },
+      "test": {
+        "RMSE": 586.1651,
+        "MAE": 471.8257,
+        "MAPE": 14.8895,
+        "DA": 47.54
+      },
+      "trained_at": "2026-03-28T13:33:03.274210",
+      "status": "success"
+    },
+    {
+      "symbol": "ADANIPORTS.NS",
+      "model_key": "ADANIPORTS_price",
+      "best_params": {
+        "max_depth": 8,
+        "min_samples_split": 5,
+        "n_estimators": 200
+      },
+      "train_rows": 2908,
+      "val_rows": 248,
+      "test_rows": 244,
+      "val": {
+        "RMSE": 34.1328,
+        "MAE": 24.0427,
+        "MAPE": 2.876,
+        "DA": 53.63
+      },
+      "test": {
+        "RMSE": 60.7654,
+        "MAE": 32.4711,
+        "MAPE": 4.1233,
+        "DA": 55.33
+      },
+      "trained_at": "2026-03-28T13:33:20.321854",
+      "status": "success"
+    },
+    {
+      "symbol": "ADANIENT.NS",
+      "model_key": "ADANIENT_price",
+      "best_params": {
+        "max_depth": 8,
+        "min_samples_split": 10,
+        "n_estimators": 100
+      },
+      "train_rows": 2910,
+      "val_rows": 248,
+      "test_rows": 244,
+      "val": {
+        "RMSE": 1277.6362,
+        "MAE": 988.4804,
+        "MAPE": 31.1312,
+        "DA": 41.53
+      },
+      "test": {
+        "RMSE": 834.9864,
+        "MAE": 684.5426,
+        "MAPE": 26.2331,
+        "DA": 50.41
+      },
+      "trained_at": "2026-03-28T13:33:34.537201",
+      "status": "success"
+    }
+  ]
+}

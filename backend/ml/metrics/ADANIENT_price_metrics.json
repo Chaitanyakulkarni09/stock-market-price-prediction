@@ -1,0 +1,26 @@
+{
+  "symbol": "ADANIENT.NS",
+  "model_key": "ADANIENT_price",
+  "best_params": {
+    "max_depth": 8,
+    "min_samples_split": 10,
+    "n_estimators": 100
+  },
+  "train_rows": 2910,
+  "val_rows": 248,
+  "test_rows": 244,
+  "val": {
+    "RMSE": 1277.6362,
+    "MAE": 988.4804,
+    "MAPE": 31.1312,
+    "DA": 41.53
+  },
+  "test": {
+    "RMSE": 834.9864,
+    "MAE": 684.5426,
+    "MAPE": 26.2331,
+    "DA": 50.41
+  },
+  "trained_at": "2026-03-28T13:33:34.537201",
+  "status": "success"
+}

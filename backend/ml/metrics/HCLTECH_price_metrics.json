@@ -1,0 +1,26 @@
+{
+  "symbol": "HCLTECH.NS",
+  "model_key": "HCLTECH_price",
+  "best_params": {
+    "max_depth": 12,
+    "min_samples_split": 5,
+    "n_estimators": 100
+  },
+  "train_rows": 2911,
+  "val_rows": 248,
+  "test_rows": 244,
+  "val": {
+    "RMSE": 48.5602,
+    "MAE": 42.6972,
+    "MAPE": 4.1902,
+    "DA": 50.0
+  },
+  "test": {
+    "RMSE": 45.9237,
+    "MAE": 31.3127,
+    "MAPE": 2.6131,
+    "DA": 51.64
+  },
+  "trained_at": "2026-03-28T13:28:00.877923",
+  "status": "success"
+}

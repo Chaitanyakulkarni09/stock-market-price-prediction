@@ -1,0 +1,26 @@
+{
+  "symbol": "INFY.NS",
+  "model_key": "INFY_price",
+  "best_params": {
+    "max_depth": 12,
+    "min_samples_split": 10,
+    "n_estimators": 100
+  },
+  "train_rows": 2910,
+  "val_rows": 248,
+  "test_rows": 244,
+  "val": {
+    "RMSE": 65.3445,
+    "MAE": 53.8454,
+    "MAPE": 3.5135,
+    "DA": 54.03
+  },
+  "test": {
+    "RMSE": 54.5993,
+    "MAE": 41.7033,
+    "MAPE": 2.9823,
+    "DA": 52.05
+  },
+  "trained_at": "2026-03-28T13:27:30.024429",
+  "status": "success"
+}

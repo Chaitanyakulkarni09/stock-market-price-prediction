@@ -1,0 +1,26 @@
+{
+  "symbol": "ICICIBANK.NS",
+  "model_key": "ICICIBANK_price",
+  "best_params": {
+    "max_depth": 8,
+    "min_samples_split": 5,
+    "n_estimators": 200
+  },
+  "train_rows": 2910,
+  "val_rows": 248,
+  "test_rows": 244,
+  "val": {
+    "RMSE": 81.0135,
+    "MAE": 58.2403,
+    "MAPE": 6.6427,
+    "DA": 53.23
+  },
+  "test": {
+    "RMSE": 161.0614,
+    "MAE": 153.8579,
+    "MAPE": 16.3586,
+    "DA": 48.36
+  },
+  "trained_at": "2026-03-28T13:28:47.976983",
+  "status": "success"
+}

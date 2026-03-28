@@ -1,0 +1,26 @@
+{
+  "symbol": "^NSEI",
+  "model_key": "NIFTY_return",
+  "best_params": {
+    "max_depth": 12,
+    "min_samples_split": 10,
+    "n_estimators": 100
+  },
+  "train_rows": 2892,
+  "val_rows": 248,
+  "test_rows": 244,
+  "val": {
+    "RMSE": 287.6786,
+    "MAE": 218.2367,
+    "MAPE": 1.2854,
+    "DA": 43.95
+  },
+  "test": {
+    "RMSE": 1289.7035,
+    "MAE": 949.4988,
+    "MAPE": 4.7843,
+    "DA": 43.85
+  },
+  "trained_at": "2026-03-28T13:26:51.443159",
+  "status": "success"
+}

@@ -1,0 +1,26 @@
+{
+  "symbol": "BAJFINANCE.NS",
+  "model_key": "BAJFINANCE_price",
+  "best_params": {
+    "max_depth": 8,
+    "min_samples_split": 10,
+    "n_estimators": 200
+  },
+  "train_rows": 2910,
+  "val_rows": 248,
+  "test_rows": 244,
+  "val": {
+    "RMSE": 25.9353,
+    "MAE": 18.4141,
+    "MAPE": 2.8869,
+    "DA": 52.02
+  },
+  "test": {
+    "RMSE": 23.7085,
+    "MAE": 17.1041,
+    "MAPE": 2.6623,
+    "DA": 48.36
+  },
+  "trained_at": "2026-03-28T13:29:53.289311",
+  "status": "success"
+}

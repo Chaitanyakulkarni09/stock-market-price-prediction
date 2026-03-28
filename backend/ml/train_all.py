@@ -45,9 +45,9 @@ for d in [MODELS_DIR, METRICS_DIR, FEATURES_DIR]:
 SYMBOLS = [
     "^NSEI", "^BSESN",
     "TCS.NS", "INFY.NS", "WIPRO.NS", "HCLTECH.NS", "TECHM.NS",
-    "HDFCBANK.NS", "ICICIBANK.NS", "SBIN.NS", "KOTAKBANK.NS", "AXISBANK.NS", "BAJFINANCE.NS",
+    "HDFCBANK.NS", "ICICIBANK.NS", "SBIN.NS", "KOTAKBANK.NS", "AXISBANK.NS", "BAJFINANCE.NS", "BAJAJFINSV.NS",
     "RELIANCE.NS", "ONGC.NS", "NTPC.NS", "POWERGRID.NS",
-    "MARUTI.NS", "TATAMOTORS.NS", "M&M.NS",
+    "MARUTI.NS", "M&M.NS",
     "HINDUNILVR.NS", "ITC.NS", "NESTLEIND.NS",
     "SUNPHARMA.NS", "TITAN.NS",
     "ADANIPORTS.NS", "ADANIENT.NS",
@@ -80,44 +80,49 @@ _HEADERS = {
 # ── Data fetching ─────────────────────────────────────────────────────────────
 
 def fetch_history(symbol: str, start: str = "2010-01-01", end: str = "2023-12-31") -> pd.DataFrame:
-    """Fetch daily OHLCV from Yahoo Finance for a date range."""
+    """Fetch daily OHLCV from Yahoo Finance. Falls back to max range if date range fails."""
     url = f"https://query1.finance.yahoo.com/v8/finance/chart/{symbol}"
-    # Convert dates to unix timestamps
     t1 = int(datetime.strptime(start, "%Y-%m-%d").replace(tzinfo=timezone.utc).timestamp())
     t2 = int(datetime.strptime(end,   "%Y-%m-%d").replace(tzinfo=timezone.utc).timestamp())
-    params = {"period1": t1, "period2": t2, "interval": "1d", "includePrePost": "false"}
 
-    for attempt in range(3):
-        try:
-            with httpx.Client(headers=_HEADERS, timeout=40, follow_redirects=True) as client:
-                r = client.get(url, params=params)
-                r.raise_for_status()
-                data = r.json()
-            break
-        except Exception as e:
-            if attempt == 2:
-                raise
-            print(f"  [RETRY {attempt+1}] {symbol}: {e}")
-            time.sleep(3)
+    # Try with explicit date range first, fall back to max range
+    attempts = [
+        {"period1": t1, "period2": t2, "interval": "1d", "includePrePost": "false"},
+        {"range": "max", "interval": "1d", "includePrePost": "false"},
+    ]
 
-    result = data.get("chart", {}).get("result", [])
-    if not result:
-        return pd.DataFrame()
-
-    res        = result[0]
-    timestamps = res.get("timestamp", [])
-    quote      = res.get("indicators", {}).get("quote", [{}])[0]
-
-    df = pd.DataFrame({
-        "Date":   [datetime.fromtimestamp(t, tz=timezone.utc).replace(tzinfo=None) for t in timestamps],
-        "Open":   quote.get("open",   [None] * len(timestamps)),
-        "High":   quote.get("high",   [None] * len(timestamps)),
-        "Low":    quote.get("low",    [None] * len(timestamps)),
-        "Close":  quote.get("close",  [None] * len(timestamps)),
-        "Volume": quote.get("volume", [0]    * len(timestamps)),
-    })
-    df["Volume"] = df["Volume"].fillna(0)
-    return df.dropna(subset=["Close"]).reset_index(drop=True)
+    last_err = None
+    for params in attempts:
+        for retry in range(2):
+            try:
+                with httpx.Client(headers=_HEADERS, timeout=40, follow_redirects=True) as client:
+                    r = client.get(url, params=params)
+                    r.raise_for_status()
+                    data = r.json()
+                result = data.get("chart", {}).get("result", [])
+                if not result:
+                    break
+                res        = result[0]
+                timestamps = res.get("timestamp", [])
+                quote      = res.get("indicators", {}).get("quote", [{}])[0]
+                df = pd.DataFrame({
+                    "Date":   [datetime.fromtimestamp(t, tz=timezone.utc).replace(tzinfo=None) for t in timestamps],
+                    "Open":   quote.get("open",   [None] * len(timestamps)),
+                    "High":   quote.get("high",   [None] * len(timestamps)),
+                    "Low":    quote.get("low",    [None] * len(timestamps)),
+                    "Close":  quote.get("close",  [None] * len(timestamps)),
+                    "Volume": quote.get("volume", [0]    * len(timestamps)),
+                })
+                df["Volume"] = df["Volume"].fillna(0)
+                df = df.dropna(subset=["Close"]).reset_index(drop=True)
+                if len(df) > 0:
+                    return df
+            except Exception as e:
+                last_err = e
+                if retry == 0:
+                    time.sleep(2)
+        # if first attempt set worked, we already returned
+    raise Exception(f"Could not fetch data for {symbol}: {last_err}")
 
 # ── Feature engineering ───────────────────────────────────────────────────────
 

@@ -1,0 +1,26 @@
+{
+  "symbol": "KOTAKBANK.NS",
+  "model_key": "KOTAKBANK_price",
+  "best_params": {
+    "max_depth": 12,
+    "min_samples_split": 10,
+    "n_estimators": 100
+  },
+  "train_rows": 2910,
+  "val_rows": 248,
+  "test_rows": 244,
+  "val": {
+    "RMSE": 6.0914,
+    "MAE": 4.7831,
+    "MAPE": 1.3101,
+    "DA": 52.42
+  },
+  "test": {
+    "RMSE": 4.3341,
+    "MAE": 3.2664,
+    "MAPE": 0.8998,
+    "DA": 53.28
+  },
+  "trained_at": "2026-03-28T13:29:20.623136",
+  "status": "success"
+}

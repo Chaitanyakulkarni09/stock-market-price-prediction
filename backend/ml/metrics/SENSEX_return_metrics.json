@@ -1,0 +1,26 @@
+{
+  "symbol": "^BSESN",
+  "model_key": "SENSEX_return",
+  "best_params": {
+    "max_depth": 8,
+    "min_samples_split": 5,
+    "n_estimators": 100
+  },
+  "train_rows": 2899,
+  "val_rows": 248,
+  "test_rows": 244,
+  "val": {
+    "RMSE": 997.4195,
+    "MAE": 756.3837,
+    "MAPE": 1.3208,
+    "DA": 49.19
+  },
+  "test": {
+    "RMSE": 4458.5778,
+    "MAE": 3406.2056,
+    "MAPE": 5.1343,
+    "DA": 42.62
+  },
+  "trained_at": "2026-03-28T13:27:03.085096",
+  "status": "success"
+}

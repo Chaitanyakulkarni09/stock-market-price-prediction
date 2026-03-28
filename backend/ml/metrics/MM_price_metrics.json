@@ -1,0 +1,26 @@
+{
+  "symbol": "M&M.NS",
+  "model_key": "MM_price",
+  "best_params": {
+    "max_depth": 8,
+    "min_samples_split": 10,
+    "n_estimators": 200
+  },
+  "train_rows": 2910,
+  "val_rows": 248,
+  "test_rows": 244,
+  "val": {
+    "RMSE": 214.4189,
+    "MAE": 161.5812,
+    "MAPE": 13.1573,
+    "DA": 47.18
+  },
+  "test": {
+    "RMSE": 492.5063,
+    "MAE": 466.6479,
+    "MAPE": 31.8566,
+    "DA": 44.67
+  },
+  "trained_at": "2026-03-28T13:31:35.688213",
+  "status": "success"
+}

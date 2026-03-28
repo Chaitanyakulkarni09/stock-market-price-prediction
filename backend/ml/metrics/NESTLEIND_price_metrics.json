@@ -1,0 +1,26 @@
+{
+  "symbol": "NESTLEIND.NS",
+  "model_key": "NESTLEIND_price",
+  "best_params": {
+    "max_depth": 12,
+    "min_samples_split": 5,
+    "n_estimators": 100
+  },
+  "train_rows": 2910,
+  "val_rows": 248,
+  "test_rows": 244,
+  "val": {
+    "RMSE": 17.9018,
+    "MAE": 14.2143,
+    "MAPE": 1.5145,
+    "DA": 50.81
+  },
+  "test": {
+    "RMSE": 142.3557,
+    "MAE": 116.0197,
+    "MAPE": 10.0306,
+    "DA": 51.64
+  },
+  "trained_at": "2026-03-28T13:32:26.996478",
+  "status": "success"
+}

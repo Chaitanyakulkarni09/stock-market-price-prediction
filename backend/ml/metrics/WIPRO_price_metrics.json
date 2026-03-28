@@ -1,0 +1,26 @@
+{
+  "symbol": "WIPRO.NS",
+  "model_key": "WIPRO_price",
+  "best_params": {
+    "max_depth": 12,
+    "min_samples_split": 10,
+    "n_estimators": 200
+  },
+  "train_rows": 2910,
+  "val_rows": 248,
+  "test_rows": 244,
+  "val": {
+    "RMSE": 17.7724,
+    "MAE": 16.2871,
+    "MAPE": 7.2689,
+    "DA": 47.98
+  },
+  "test": {
+    "RMSE": 16.8445,
+    "MAE": 16.3367,
+    "MAPE": 8.2834,
+    "DA": 47.95
+  },
+  "trained_at": "2026-03-28T13:27:44.720161",
+  "status": "success"
+}

@@ -1,0 +1,26 @@
+{
+  "symbol": "TITAN.NS",
+  "model_key": "TITAN_price",
+  "best_params": {
+    "max_depth": 8,
+    "min_samples_split": 10,
+    "n_estimators": 200
+  },
+  "train_rows": 2910,
+  "val_rows": 248,
+  "test_rows": 244,
+  "val": {
+    "RMSE": 123.9797,
+    "MAE": 103.4646,
+    "MAPE": 4.1956,
+    "DA": 53.63
+  },
+  "test": {
+    "RMSE": 586.1651,
+    "MAE": 471.8257,
+    "MAPE": 14.8895,
+    "DA": 47.54
+  },
+  "trained_at": "2026-03-28T13:33:03.274210",
+  "status": "success"
+}

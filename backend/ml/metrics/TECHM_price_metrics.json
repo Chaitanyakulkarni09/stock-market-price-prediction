@@ -1,0 +1,26 @@
+{
+  "symbol": "TECHM.NS",
+  "model_key": "TECHM_price",
+  "best_params": {
+    "max_depth": 12,
+    "min_samples_split": 10,
+    "n_estimators": 200
+  },
+  "train_rows": 2910,
+  "val_rows": 248,
+  "test_rows": 244,
+  "val": {
+    "RMSE": 74.9053,
+    "MAE": 60.2305,
+    "MAPE": 5.1659,
+    "DA": 46.37
+  },
+  "test": {
+    "RMSE": 64.0732,
+    "MAE": 55.2818,
+    "MAPE": 4.9198,
+    "DA": 48.36
+  },
+  "trained_at": "2026-03-28T13:28:18.245924",
+  "status": "success"
+}

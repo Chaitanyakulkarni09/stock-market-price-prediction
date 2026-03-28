@@ -1,0 +1,26 @@
+{
+  "symbol": "TCS.NS",
+  "model_key": "TCS_price",
+  "best_params": {
+    "max_depth": 12,
+    "min_samples_split": 5,
+    "n_estimators": 200
+  },
+  "train_rows": 2910,
+  "val_rows": 248,
+  "test_rows": 244,
+  "val": {
+    "RMSE": 66.474,
+    "MAE": 49.8385,
+    "MAPE": 1.4821,
+    "DA": 49.6
+  },
+  "test": {
+    "RMSE": 56.5625,
+    "MAE": 44.6814,
+    "MAPE": 1.3286,
+    "DA": 54.51
+  },
+  "trained_at": "2026-03-28T13:27:16.751077",
+  "status": "success"
+}

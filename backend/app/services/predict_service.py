@@ -38,7 +38,7 @@ SYMBOL_TO_MODEL = {
     "POWERGRID.NS":  "POWERGRID_price",
     # Auto
     "MARUTI.NS":     "MARUTI_price",
-    "TATAMOTORS.NS": "TATAMOTORS_price",
+    "BAJAJFINSV.NS": "BAJAJFINSV_price",
     "M&M.NS":        "MM_price",
     # FMCG
     "HINDUNILVR.NS": "HINDUNILVR_price",
