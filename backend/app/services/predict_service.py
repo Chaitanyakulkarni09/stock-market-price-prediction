@@ -1,9 +1,9 @@
 import joblib
 import random
+import numpy as np
 import pandas as pd
 from datetime import datetime
 from pathlib import Path
-import httpx
 
 from app.schemas.prediction import PredictionResponse
 from app.services.stock_service import fetch_latest_dataframe, _yahoo_chart, _parse_chart, _safe_float
@@ -12,18 +12,67 @@ MODELS_DIR = Path(__file__).resolve().parents[2] / "ml" / "models"
 
 _model_registry: dict = {}
 
+INDEX_SYMBOLS = {"^NSEI", "^BSESN"}
+
+SYMBOL_TO_MODEL = {
+    # Indices
+    "^NSEI":         "NIFTY_return",
+    "^BSESN":        "SENSEX_return",
+    # IT
+    "TCS.NS":        "TCS_price",
+    "INFY.NS":       "INFY_price",
+    "WIPRO.NS":      "WIPRO_price",
+    "HCLTECH.NS":    "HCLTECH_price",
+    "TECHM.NS":      "TECHM_price",
+    # Banking & Finance
+    "HDFCBANK.NS":   "HDFCBANK_price",
+    "ICICIBANK.NS":  "ICICIBANK_price",
+    "SBIN.NS":       "SBIN_price",
+    "KOTAKBANK.NS":  "KOTAKBANK_price",
+    "AXISBANK.NS":   "AXISBANK_price",
+    "BAJFINANCE.NS": "BAJFINANCE_price",
+    # Energy & Utilities
+    "RELIANCE.NS":   "RELIANCE_price",
+    "ONGC.NS":       "ONGC_price",
+    "NTPC.NS":       "NTPC_price",
+    "POWERGRID.NS":  "POWERGRID_price",
+    # Auto
+    "MARUTI.NS":     "MARUTI_price",
+    "TATAMOTORS.NS": "TATAMOTORS_price",
+    "M&M.NS":        "MM_price",
+    # FMCG
+    "HINDUNILVR.NS": "HINDUNILVR_price",
+    "ITC.NS":        "ITC_price",
+    "NESTLEIND.NS":  "NESTLEIND_price",
+    # Pharma
+    "SUNPHARMA.NS":  "SUNPHARMA_price",
+    # Consumer
+    "TITAN.NS":      "TITAN_price",
+    # Conglomerate
+    "ADANIPORTS.NS": "ADANIPORTS_price",
+    "ADANIENT.NS":   "ADANIENT_price",
+}
+
+FEATURE_COLUMNS = [
+    "Open", "High", "Low", "Close", "Volume",
+    "MA5", "MA10", "MA20", "MA50",
+    "RSI", "MACD", "MACD_signal",
+    "Volume_change", "Momentum",
+    "BB_upper", "BB_lower", "BB_width",
+    "ATR", "OBV",
+]
+
 
 def load_all_models():
-    """Load all .pkl models from ml/models/ into memory at startup."""
     if not MODELS_DIR.exists():
         print(f"[WARNING] Models directory not found: {MODELS_DIR}")
         return
     loaded = 0
     for pkl_file in MODELS_DIR.glob("*.pkl"):
-        symbol = pkl_file.stem
+        key = pkl_file.stem
         try:
-            _model_registry[symbol] = joblib.load(pkl_file)
-            print(f"[ML] Loaded model: {symbol}")
+            _model_registry[key] = joblib.load(pkl_file)
+            print(f"[ML] Loaded model: {key}")
             loaded += 1
         except Exception as e:
             print(f"[ML] Failed to load {pkl_file.name}: {e}")
@@ -31,7 +80,6 @@ def load_all_models():
 
 
 def get_current_price(symbol: str):
-    """Fetch latest closing price via direct Yahoo Finance API."""
     try:
         data = _yahoo_chart(symbol, range_="5d", interval="1d")
         df   = _parse_chart(data, symbol)
@@ -43,51 +91,53 @@ def get_current_price(symbol: str):
         return None
 
 
-def engineer_features(df: pd.DataFrame) -> pd.DataFrame:
+def engineer_features(df: pd.DataFrame, is_index: bool = False) -> pd.DataFrame:
     df = df.copy()
     df["MA5"]  = df["Close"].rolling(5).mean()
     df["MA10"] = df["Close"].rolling(10).mean()
     df["MA20"] = df["Close"].rolling(20).mean()
+    df["MA50"] = df["Close"].rolling(50).mean()
 
     delta = df["Close"].diff()
     gain  = delta.clip(lower=0).rolling(14).mean()
     loss  = (-delta.clip(upper=0)).rolling(14).mean()
-    rs    = gain / (loss + 1e-9)
-    df["RSI"] = 100 - (100 / (1 + rs))
+    df["RSI"] = 100 - (100 / (1 + gain / (loss + 1e-9)))
 
     ema12 = df["Close"].ewm(span=12, adjust=False).mean()
     ema26 = df["Close"].ewm(span=26, adjust=False).mean()
     df["MACD"]        = ema12 - ema26
     df["MACD_signal"] = df["MACD"].ewm(span=9, adjust=False).mean()
 
-    df["Volume_change"] = df["Volume"].pct_change()
-    df["Momentum"]      = df["Close"] - df["Close"].shift(5)
+    if is_index:
+        df["Volume"]        = 0.0
+        df["Volume_change"] = 0.0
+        df["OBV"]           = 0.0
+    else:
+        df["Volume_change"] = df["Volume"].pct_change()
+        obv = [0]
+        for i in range(1, len(df)):
+            if df["Close"].iloc[i] > df["Close"].iloc[i - 1]:
+                obv.append(obv[-1] + df["Volume"].iloc[i])
+            elif df["Close"].iloc[i] < df["Close"].iloc[i - 1]:
+                obv.append(obv[-1] - df["Volume"].iloc[i])
+            else:
+                obv.append(obv[-1])
+        df["OBV"] = obv
 
-    rolling_mean   = df["Close"].rolling(20).mean()
-    rolling_std    = df["Close"].rolling(20).std()
-    df["BB_upper"] = rolling_mean + 2 * rolling_std
-    df["BB_lower"] = rolling_mean - 2 * rolling_std
+    df["Momentum"] = df["Close"] - df["Close"].shift(5)
+
+    rm = df["Close"].rolling(20).mean()
+    rs = df["Close"].rolling(20).std()
+    df["BB_upper"] = rm + 2 * rs
+    df["BB_lower"] = rm - 2 * rs
     df["BB_width"] = df["BB_upper"] - df["BB_lower"]
+
+    hl  = df["High"] - df["Low"]
+    hpc = (df["High"] - df["Close"].shift(1)).abs()
+    lpc = (df["Low"]  - df["Close"].shift(1)).abs()
+    df["ATR"] = pd.concat([hl, hpc, lpc], axis=1).max(axis=1).rolling(14).mean()
+
     return df
-
-
-FEATURE_COLUMNS = [
-    "Open", "High", "Low", "Close", "Volume",
-    "MA5", "MA10", "MA20", "RSI", "MACD", "MACD_signal",
-    "Volume_change", "Momentum", "BB_upper", "BB_lower", "BB_width"
-]
-
-SYMBOL_TO_MODEL = {
-    "HDFCBANK.NS":   "HDFCBANK.NS",
-    "HINDUNILVR.NS": "HINDUNILVR.NS",
-    "INFY.NS":       "INFY.NS",
-    "MARUTI.NS":     "MARUTI.NS",
-    "RELIANCE.NS":   "RELIANCE.NS",
-    "^NSEI":         "^NSEI",
-    "^BSESN":        "^BSESN",
-}
-
-INDEX_SYMBOLS = set()  # new models are all price-based, no special index handling needed
 
 
 def _get_model_features(model_key: str) -> list:
@@ -98,25 +148,6 @@ def _get_model_features(model_key: str) -> list:
         return list(model.feature_names_in_)
     n = getattr(model, "n_features_in_", len(FEATURE_COLUMNS))
     return FEATURE_COLUMNS[:n]
-
-
-def _build_index_features(symbol: str) -> pd.DataFrame:
-    stocks = ["RELIANCE.NS", "INFY.NS", "HDFCBANK.NS", "MARUTI.NS", "HINDUNILVR.NS"]
-    col_map = {
-        "RELIANCE.NS":   "RELIANCE_Close",
-        "INFY.NS":       "INFY_Close",
-        "HDFCBANK.NS":   "HDFCBANK_Close",
-        "MARUTI.NS":     "MARUTI_Close",
-        "HINDUNILVR.NS": "HINDUNILVR_Close",
-    }
-    row = {}
-    for s in stocks:
-        price = get_current_price(s)
-        if price is None:
-            print(f"[INDEX FEAT] Could not get price for {s}, aborting index prediction")
-            return pd.DataFrame()
-        row[col_map[s]] = price
-    return pd.DataFrame([row])
 
 
 def _fallback_response(symbol: str, current_price: float, model_available: bool) -> PredictionResponse:
@@ -135,6 +166,7 @@ def predict_price(symbol: str) -> PredictionResponse:
     model_key       = SYMBOL_TO_MODEL.get(symbol)
     model_available = model_key is not None and model_key in _model_registry
     current_price   = get_current_price(symbol)
+    is_index        = symbol in INDEX_SYMBOLS
 
     if current_price is None:
         return PredictionResponse(
@@ -149,33 +181,28 @@ def predict_price(symbol: str) -> PredictionResponse:
     model = _model_registry[model_key]
 
     try:
-        if symbol in INDEX_SYMBOLS:
-            feat_df = _build_index_features(symbol)
-            if feat_df.empty:
-                return _fallback_response(symbol, current_price, False)
-            raw_output = float(model.predict(feat_df.values)[0])
-            if abs(raw_output) < 1.0:
-                predicted_price = round(current_price * (1 + raw_output), 2)
-            else:
-                predicted_price = round(raw_output, 2)
-        else:
-            df = fetch_latest_dataframe(symbol, days=60)
-            if df.empty:
-                return _fallback_response(symbol, current_price, False)
-            df = engineer_features(df)
-            df = df.replace([float('inf'), float('-inf')], pd.NA)
-            df = df.dropna(subset=["Close"])
-            if df.empty:
-                return _fallback_response(symbol, current_price, False)
-            features        = _get_model_features(model_key)
-            latest_features = df[features].iloc[-1].values.reshape(1, -1)
-            predicted_price = round(float(model.predict(latest_features)[0]), 2)
+        df = fetch_latest_dataframe(symbol, days=60)
+        if df.empty:
+            return _fallback_response(symbol, current_price, False)
+
+        df = engineer_features(df, is_index=is_index)
+        df = df.replace([np.inf, -np.inf], pd.NA)
+        df = df.dropna(subset=["Close"])
+        if df.empty:
+            return _fallback_response(symbol, current_price, False)
+
+        features        = _get_model_features(model_key)
+        # Fill any missing feature columns with 0 (handles old models with fewer features)
+        for col in features:
+            if col not in df.columns:
+                df[col] = 0.0
+        latest_features = df[features].iloc[-1].values.reshape(1, -1)
+        predicted_price = round(float(model.predict(latest_features)[0]), 2)
 
         # Clamp to ±30%
         lower = current_price * 0.70
         upper = current_price * 1.30
         if predicted_price < lower or predicted_price > upper:
-            print(f"[CLAMP] {symbol}: raw={predicted_price} → [{lower:.2f}, {upper:.2f}]")
             predicted_price = round(max(lower, min(predicted_price, upper)), 2)
 
         change_percent = round(((predicted_price - current_price) / current_price) * 100, 2)

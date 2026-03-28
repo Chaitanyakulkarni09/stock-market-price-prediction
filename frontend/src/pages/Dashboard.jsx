@@ -11,9 +11,9 @@ import { useNavigate } from "react-router-dom";
 import { SYMBOL_MAP, getDisplayName, getShortName } from "../utils/symbols";
 import { useAuth } from "../context/AuthContext";
 
-const STOCK_SYMBOLS = ["RELIANCE.NS", "INFY.NS", "HDFCBANK.NS", "MARUTI.NS", "HINDUNILVR.NS"];
+const STOCK_SYMBOLS = ["RELIANCE.NS", "TCS.NS", "INFY.NS", "HDFCBANK.NS", "ICICIBANK.NS", "SBIN.NS", "MARUTI.NS", "HINDUNILVR.NS"];
 const INDEX_SYMBOLS = ["^NSEI", "^BSESN"];
-const ALL_QUOTE_SYMBOLS = [...STOCK_SYMBOLS, ...INDEX_SYMBOLS];
+const ALL_QUOTE_SYMBOLS = [...INDEX_SYMBOLS, ...STOCK_SYMBOLS];
 
 const fadeUp = {
   hidden: { opacity: 0, y: 20 },
@@ -172,7 +172,7 @@ export default function Dashboard() {
             View all →
           </button>
         </div>
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-8 gap-3">
           {loading
             ? STOCK_SYMBOLS.map((s) => <CardSkeleton key={s} />)
             : STOCK_SYMBOLS.map((s, i) => {
@@ -208,7 +208,7 @@ export default function Dashboard() {
             View all →
           </button>
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
           {STOCK_SYMBOLS.map((s, i) => (
             <motion.div key={s} custom={i} variants={fadeUp} initial="hidden" animate="show">
               <PredictionCard symbol={s} />

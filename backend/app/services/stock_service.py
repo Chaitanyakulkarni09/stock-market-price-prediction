@@ -4,8 +4,24 @@ from datetime import datetime, timezone, timedelta
 from app.schemas.stock import OHLCVPoint, StockHistoryResponse, StockQuote
 
 SUPPORTED_SYMBOLS = [
-    "HDFCBANK.NS", "HINDUNILVR.NS", "MARUTI.NS",
-    "RELIANCE.NS", "INFY.NS", "^NSEI", "^BSESN"
+    # Indices
+    "^NSEI", "^BSESN",
+    # IT
+    "TCS.NS", "INFY.NS", "WIPRO.NS", "HCLTECH.NS", "TECHM.NS",
+    # Banking & Finance
+    "HDFCBANK.NS", "ICICIBANK.NS", "SBIN.NS", "KOTAKBANK.NS", "AXISBANK.NS", "BAJFINANCE.NS",
+    # Energy & Utilities
+    "RELIANCE.NS", "ONGC.NS", "NTPC.NS", "POWERGRID.NS",
+    # Auto
+    "MARUTI.NS", "TATAMOTORS.NS", "M&M.NS",
+    # FMCG
+    "HINDUNILVR.NS", "ITC.NS", "NESTLEIND.NS",
+    # Pharma
+    "SUNPHARMA.NS",
+    # Consumer
+    "TITAN.NS",
+    # Conglomerate / Infrastructure
+    "ADANIPORTS.NS", "ADANIENT.NS",
 ]
 
 # Headers that bypass Yahoo Finance's cloud-IP block

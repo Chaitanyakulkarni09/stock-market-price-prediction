@@ -4,12 +4,14 @@ import { Brain, ChevronDown } from 'lucide-react'
 import PredictionCard from '../components/PredictionCard'
 import { getPrediction } from '../api/api'
 import { Spinner } from '../components/Loader'
+import { ALL_SYMBOLS, SYMBOL_MAP, SECTORS, getSymbolsBySector } from '../utils/symbols'
 
-const SYMBOLS = ['RELIANCE.NS', 'INFY.NS', 'HDFCBANK.NS', 'MARUTI.NS', 'HINDUNILVR.NS', '^NSEI', '^BSESN']
+const FEATURED = ["RELIANCE.NS", "TCS.NS", "INFY.NS", "HDFCBANK.NS", "ICICIBANK.NS", "MARUTI.NS", "^NSEI", "^BSESN"]
 
 export default function Predictions() {
   const [selected, setSelected] = useState('RELIANCE.NS')
   const [result, setResult] = useState(null)
+  const [activeSector, setActiveSector] = useState('All')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
 
@@ -53,7 +55,9 @@ export default function Predictions() {
               onChange={e => setSelected(e.target.value)}
               className="input-base appearance-none pr-10 cursor-pointer"
             >
-              {SYMBOLS.map(s => <option key={s} value={s}>{s}</option>)}
+              {ALL_SYMBOLS.map(s => (
+                <option key={s} value={s}>{SYMBOL_MAP[s].display} ({s})</option>
+              ))}
             </select>
             <ChevronDown size={14} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
           </div>
@@ -136,17 +140,26 @@ export default function Predictions() {
         </motion.div>
       )}
 
-      {/* All prediction cards */}
+      {/* All prediction cards — filterable by sector */}
       <div>
-        <h2 className="font-semibold text-slate-900 dark:text-white mb-4">All Stocks</h2>
+        <div className="flex items-center justify-between mb-3">
+          <h2 className="font-semibold text-slate-900 dark:text-white">All Stocks ({ALL_SYMBOLS.length})</h2>
+          <div className="flex flex-wrap gap-1.5">
+            {['All', ...SECTORS].map(s => (
+              <button key={s} onClick={() => setActiveSector(s)}
+                className={`px-2.5 py-1 rounded-full text-xs font-semibold transition-all
+                  ${activeSector === s
+                    ? 'bg-blue-600 text-white'
+                    : 'bg-white/70 dark:bg-slate-800/70 border border-white/80 dark:border-slate-700/60 text-slate-500 dark:text-slate-400 hover:text-blue-500'}`}>
+                {s}
+              </button>
+            ))}
+          </div>
+        </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-          {SYMBOLS.map((s, i) => (
-            <motion.div
-              key={s}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: i * 0.07 }}
-            >
+          {(activeSector === 'All' ? ALL_SYMBOLS : getSymbolsBySector(activeSector)).map((s, i) => (
+            <motion.div key={s} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: i * 0.03 }}>
               <PredictionCard symbol={s} />
             </motion.div>
           ))}

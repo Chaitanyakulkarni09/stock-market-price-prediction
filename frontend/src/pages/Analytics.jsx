@@ -12,7 +12,7 @@ import { getDisplayName } from "../utils/symbols";
 import { useTheme } from "../context/ThemeContext";
 
 // ── Static constants (defined once, never recreated) ─────────────────────────
-const STOCK_SYMBOLS = ["RELIANCE.NS", "INFY.NS", "HDFCBANK.NS", "MARUTI.NS", "HINDUNILVR.NS", "^NSEI", "^BSESN"];
+const STOCK_SYMBOLS = ["RELIANCE.NS","TCS.NS","INFY.NS","HDFCBANK.NS","ICICIBANK.NS","SBIN.NS","WIPRO.NS","HCLTECH.NS","MARUTI.NS","TATAMOTORS.NS","HINDUNILVR.NS","ITC.NS","SUNPHARMA.NS","TITAN.NS","ONGC.NS","NTPC.NS","POWERGRID.NS","KOTAKBANK.NS","AXISBANK.NS","BAJFINANCE.NS","TECHM.NS","M&M.NS","NESTLEIND.NS","ADANIPORTS.NS","ADANIENT.NS","^NSEI","^BSESN"];
 
 const GLASS = {
   background: "rgba(15,23,42,0.7)",
