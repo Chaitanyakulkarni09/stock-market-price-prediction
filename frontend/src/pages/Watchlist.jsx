@@ -1,23 +1,23 @@
 ﻿import { useEffect, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Star, Plus, X, TrendingUp, TrendingDown, Trash2 } from 'lucide-react'
+import { Star, Plus, X, TrendingUp, TrendingDown, Trash2, Search } from 'lucide-react'
 import { getWatchlist, addToWatchlist, removeFromWatchlist, getStockQuote } from '../api/api'
 import { Spinner } from '../components/Loader'
 import { useAuth } from '../context/AuthContext'
 import { useNavigate } from 'react-router-dom'
-
-const ALL_SYMBOLS = ['RELIANCE.NS','INFY.NS','HDFCBANK.NS','MARUTI.NS','HINDUNILVR.NS','^NSEI','^BSESN']
+import { ALL_SYMBOLS, SYMBOL_MAP, SECTORS, getSymbolsBySector, getShortName } from '../utils/symbols'
 
 export default function Watchlist() {
   const { user } = useAuth()
   const navigate  = useNavigate()
-  const [items,     setItems]     = useState([])
-  const [quotes,    setQuotes]    = useState({})
-  const [loading,   setLoading]   = useState(true)
-  const [adding,    setAdding]    = useState(false)
-  const [newSymbol, setNewSymbol] = useState('')
-  const [showAdd,   setShowAdd]   = useState(false)
-  const [error,     setError]     = useState('')
+  const [items,       setItems]       = useState([])
+  const [quotes,      setQuotes]      = useState({})
+  const [loading,     setLoading]     = useState(true)
+  const [adding,      setAdding]      = useState(false)
+  const [newSymbol,   setNewSymbol]   = useState('')
+  const [showAdd,     setShowAdd]     = useState(false)
+  const [error,       setError]       = useState('')
+  const [activeSector,setActiveSector]= useState('All')
 
   const fetchWatchlist = async () => {
     setLoading(true)
@@ -95,14 +95,27 @@ export default function Watchlist() {
               </motion.button>
             </div>
             {error && <p className="text-xs text-red-400 mb-2">{error}</p>}
-            <div className="flex flex-wrap gap-2">
-              {ALL_SYMBOLS.map(s => (
+            {/* Sector filter */}
+            <div className="flex flex-wrap gap-1.5 mb-2">
+              {['All', ...SECTORS].map(s => (
+                <button key={s} onClick={() => setActiveSector(s)}
+                  className={`px-2.5 py-1 rounded-full text-[10px] font-bold transition-all
+                    ${activeSector === s
+                      ? 'bg-blue-600 text-white'
+                      : 'bg-slate-100/80 dark:bg-slate-800/80 text-slate-500 dark:text-slate-400 hover:text-blue-500'}`}>
+                  {s}
+                </button>
+              ))}
+            </div>
+            {/* Symbol pills */}
+            <div className="flex flex-wrap gap-1.5 max-h-32 overflow-y-auto">
+              {(activeSector === 'All' ? ALL_SYMBOLS : getSymbolsBySector(activeSector)).map(s => (
                 <motion.button key={s} whileTap={{ scale: 0.93 }} onClick={() => setNewSymbol(s)}
-                  className="px-2.5 py-1 rounded-lg text-xs font-medium
-                    bg-slate-100/80 dark:bg-slate-800/80
-                    text-slate-600 dark:text-slate-400
-                    hover:bg-blue-600 hover:text-white transition-all">
-                  {s.replace('.NS','').replace('^','')}
+                  className={`px-2.5 py-1 rounded-lg text-xs font-medium transition-all
+                    ${newSymbol === s
+                      ? 'bg-blue-600 text-white'
+                      : 'bg-slate-100/80 dark:bg-slate-800/80 text-slate-600 dark:text-slate-400 hover:bg-blue-600 hover:text-white'}`}>
+                  {getShortName(s)}
                 </motion.button>
               ))}
             </div>
@@ -160,7 +173,7 @@ export default function Watchlist() {
                             </div>
                             <div>
                               <p className="font-semibold text-slate-900 dark:text-white">
-                                {item.symbol.replace('.NS','').replace('^','')}
+                                {SYMBOL_MAP[item.symbol]?.short || item.symbol.replace('.NS','').replace('^','')}
                               </p>
                               <p className="text-xs text-slate-400">{item.symbol}</p>
                             </div>

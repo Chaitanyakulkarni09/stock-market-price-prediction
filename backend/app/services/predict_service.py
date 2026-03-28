@@ -199,10 +199,12 @@ def predict_price(symbol: str) -> PredictionResponse:
         latest_features = df[features].iloc[-1].values.reshape(1, -1)
         predicted_price = round(float(model.predict(latest_features)[0]), 2)
 
-        # Clamp to ±30%
-        lower = current_price * 0.70
-        upper = current_price * 1.30
+        # Clamp to ±3% — realistic next-day range for large-cap Indian stocks
+        MAX_CHANGE = 0.03
+        lower = current_price * (1 - MAX_CHANGE)
+        upper = current_price * (1 + MAX_CHANGE)
         if predicted_price < lower or predicted_price > upper:
+            print(f"[CLAMP] {symbol}: raw={predicted_price} → [{lower:.2f}, {upper:.2f}]")
             predicted_price = round(max(lower, min(predicted_price, upper)), 2)
 
         change_percent = round(((predicted_price - current_price) / current_price) * 100, 2)

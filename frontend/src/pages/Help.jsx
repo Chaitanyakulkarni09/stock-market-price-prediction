@@ -3,12 +3,38 @@ import { HelpCircle, ChevronDown } from 'lucide-react'
 import { useState } from 'react'
 
 const FAQS = [
-  { q: 'How does the AI prediction work?', a: 'Our system uses a Random Forest machine learning model trained on historical stock data from January 2010 to December 2023 (14 years). It computes 16 technical indicators (MA, RSI, MACD, Bollinger Bands, Volume) and predicts the next-day closing price.' },
-  { q: 'How accurate are the predictions?', a: 'The models achieve R² scores between 0.85–0.95 on test data. However, stock markets are inherently unpredictable. Use predictions as one signal among many, not as financial advice.' },
-  { q: 'What stocks are supported?', a: 'Currently: RELIANCE.NS, INFY.NS, HDFCBANK.NS, MARUTI.NS, HINDUNILVR.NS, ^NSEI (Nifty 50), and ^BSESN (Sensex).' },
-  { q: 'How do I add stocks to my watchlist?', a: 'Go to the Watchlist page, click "Add Stock", type the symbol (e.g. RELIANCE.NS) or click a quick-add button, then click Add.' },
-  { q: 'What does the confidence score mean?', a: 'The confidence score (70–90%) reflects the model\'s internal certainty. Higher scores indicate the model found stronger patterns in recent data. It is not a guarantee of accuracy.' },
-  { q: 'Why is the prediction showing 0 or current price?', a: 'This happens when the ML model file (.pkl) is not found for that symbol. Run `python -m ml.train` in the backend directory to train and save models.' },
+  {
+    q: 'How does the AI prediction work?',
+    a: 'The system uses a Random Forest Regressor trained with GridSearchCV and TimeSeriesSplit cross-validation on 14 years of historical data (Jan 2010 – Dec 2023). It computes 19 technical indicators — Moving Averages (MA5/10/20/50), RSI, MACD, Bollinger Bands, ATR, OBV, Momentum, and Volume change — then predicts the next-day closing price.',
+  },
+  {
+    q: 'How accurate are the predictions?',
+    a: 'Accuracy varies by stock. Best performers on 2023 test data: HDFCBANK (MAPE 0.97%), KOTAKBANK (0.90%), ONGC (1.09%), TCS (1.33%). Volatile stocks like Adani have higher error. Directional accuracy (predicting up/down correctly) ranges from 43–56%. Use predictions as one signal, not as financial advice.',
+  },
+  {
+    q: 'What stocks are supported?',
+    a: '27 symbols across 8 sectors: IT (TCS, INFY, WIPRO, HCLTECH, TECHM), Banking (HDFCBANK, ICICIBANK, SBIN, KOTAKBANK, AXISBANK), Finance (BAJFINANCE, BAJAJFINSV), Energy (RELIANCE, ONGC), Utilities (NTPC, POWERGRID), Auto (MARUTI, M&M), FMCG (HINDUNILVR, ITC, NESTLEIND), Pharma (SUNPHARMA), Consumer (TITAN), Infrastructure (ADANIPORTS, ADANIENT), and Indices (NIFTY 50, SENSEX).',
+  },
+  {
+    q: 'How do I add stocks to my watchlist?',
+    a: 'Go to the Watchlist page, click "Add Stock", then either type a symbol manually or use the sector filter tabs to browse and click any stock pill. Press Add or hit Enter.',
+  },
+  {
+    q: 'What does the confidence score mean?',
+    a: 'The confidence score (70–90%) is a randomised indicator representing model certainty. It is not a statistical probability — it is meant to give a relative sense of signal strength. Do not treat it as a guarantee.',
+  },
+  {
+    q: 'Why is the prediction showing 0 or same as current price?',
+    a: 'This means the ML model file (.pkl) was not found for that symbol, or the live price fetch failed. The backend falls back to returning the current price with 0% change. Make sure the backend is running and models are loaded.',
+  },
+  {
+    q: 'Why are some predictions capped at ±3%?',
+    a: 'Next-day stock price changes rarely exceed 3% for large-cap Indian stocks under normal conditions. The system clamps predictions to ±3% of current price to prevent unrealistic outlier predictions from the ML model.',
+  },
+  {
+    q: 'How do I retrain the models?',
+    a: 'From the backend/ folder, run: python -m ml.train_all — This fetches 14 years of data from Yahoo Finance and trains all 27 models using GridSearchCV. Takes about 10–15 minutes.',
+  },
 ]
 
 function FAQ({ q, a }) {
@@ -22,23 +48,15 @@ function FAQ({ q, a }) {
           <ChevronDown size={16} className="text-slate-400 flex-shrink-0" />
         </motion.div>
       </button>
-      <AnimateHeight open={open}>
+      <motion.div
+        initial={false}
+        animate={{ height: open ? 'auto' : 0, opacity: open ? 1 : 0 }}
+        transition={{ duration: 0.25 }}
+        style={{ overflow: 'hidden' }}
+      >
         <p className="pb-4 text-sm text-slate-500 dark:text-slate-400 leading-relaxed">{a}</p>
-      </AnimateHeight>
+      </motion.div>
     </div>
-  )
-}
-
-function AnimateHeight({ open, children }) {
-  return (
-    <motion.div
-      initial={false}
-      animate={{ height: open ? 'auto' : 0, opacity: open ? 1 : 0 }}
-      transition={{ duration: 0.25 }}
-      style={{ overflow: 'hidden' }}
-    >
-      {children}
-    </motion.div>
   )
 }
 
