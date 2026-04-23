@@ -224,7 +224,7 @@
 
   /* ── Light mode explicit overrides ── */
   body.light {
-    background: linear-gradient(135deg, #e8f4fd 0%, #dbeafe 50%, #e0f2fe 100%);
+    background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 40%, #fefce8 100%);
     color: #0f172a;
   }
   body.light h1, body.light h2, body.light h3 {
@@ -237,5 +237,10 @@
   body.light select option {
     background: #ffffff;
     color: #0f172a;
+  }
+  /* Sidebar active link — stronger blue in light mode */
+  body.light .sidebar-active {
+    background: #dbeafe;
+    color: #1d4ed8;
   }
 }

@@ -34,4 +34,7 @@ export const deleteAccount = ()                     => api.delete('/api/auth/del
 export const saveChat        = (user_message, bot_response) => api.post('/api/chat/save',    { user_message, bot_response }).then(r => r.data)
 export const getChatHistory  = ()                           => api.get('/api/chat/history').then(r => r.data)
 
+// ── Portfolio CSP solver ──────────────────────────────────────────────────────
+export const getConstrainedPortfolios = (constraints) => api.post('/api/portfolio/constraints', constraints).then(r => r.data)
+
 export default api

@@ -2,19 +2,20 @@ import { NavLink } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
   LayoutDashboard, TrendingUp, Brain, BarChart2,
-  Star, MessageSquare, HelpCircle, Info, X, Cpu
+  Star, MessageSquare, HelpCircle, Info, X, Cpu, Briefcase
 } from 'lucide-react'
 
 const links = [
-  { to: '/',            icon: LayoutDashboard, label: 'Dashboard' },
-  { to: '/stocks',      icon: TrendingUp,      label: 'Stocks' },
-  { to: '/predictions', icon: Brain,           label: 'Predictions' },
-  { to: '/analytics',   icon: BarChart2,       label: 'Analytics' },
-  { to: '/ai-engine',   icon: Cpu,             label: 'AI Engine' },
-  { to: '/watchlist',   icon: Star,            label: 'Watchlist' },
-  { to: '/chatbot',     icon: MessageSquare,   label: 'Chatbot' },
-  { to: '/help',        icon: HelpCircle,      label: 'Help' },
-  { to: '/about',       icon: Info,            label: 'About' },
+  { to: '/',                icon: LayoutDashboard, label: 'Dashboard' },
+  { to: '/stocks',          icon: TrendingUp,      label: 'Stocks' },
+  { to: '/predictions',     icon: Brain,           label: 'Predictions' },
+  { to: '/analytics',       icon: BarChart2,       label: 'Analytics' },
+  { to: '/ai-engine',       icon: Cpu,             label: 'AI Engine' },
+  { to: '/portfolio',       icon: Briefcase,       label: 'Portfolio CSP' },
+  { to: '/watchlist',       icon: Star,            label: 'Watchlist' },
+  { to: '/chatbot',         icon: MessageSquare,   label: 'Chatbot' },
+  { to: '/help',            icon: HelpCircle,      label: 'Help' },
+  { to: '/about',           icon: Info,            label: 'About' },
 ]
 
 function NavItem({ to, icon: Icon, label, onClick }) {

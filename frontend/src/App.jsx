@@ -11,6 +11,7 @@ const Stocks      = lazy(() => import('./pages/Stocks'))
 const Predictions = lazy(() => import('./pages/Predictions'))
 const Analytics   = lazy(() => import('./pages/Analytics'))
 const AIEngine    = lazy(() => import('./pages/AIEngine'))
+const Portfolio   = lazy(() => import('./pages/PortfolioBuilder'))
 const Watchlist   = lazy(() => import('./pages/Watchlist'))
 const Chatbot     = lazy(() => import('./pages/Chatbot'))
 const Help        = lazy(() => import('./pages/Help'))
@@ -57,6 +58,7 @@ function Layout() {
               <Route path="/predictions" element={<ProtectedRoute><Predictions /></ProtectedRoute>} />
               <Route path="/analytics"   element={<ProtectedRoute><Analytics onAlert={handleAlert} /></ProtectedRoute>} />
               <Route path="/ai-engine"   element={<ProtectedRoute><AIEngine /></ProtectedRoute>} />
+              <Route path="/portfolio"   element={<ProtectedRoute><Portfolio /></ProtectedRoute>} />
               <Route path="/watchlist"   element={<ProtectedRoute><Watchlist /></ProtectedRoute>} />
               <Route path="/chatbot"     element={<ProtectedRoute><Chatbot /></ProtectedRoute>} />
               <Route path="/help"        element={<Help />} />

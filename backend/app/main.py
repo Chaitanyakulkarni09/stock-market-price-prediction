@@ -6,7 +6,7 @@ import os
 from app.database import engine, Base
 from app.models import StockPrice, Prediction, WatchlistItem, User, ChatHistory
 from app.routes import stocks, predictions, watchlist
-from app.routes import auth, chat
+from app.routes import auth, chat, portfolio
 from app.services.predict_service import load_all_models
 
 
@@ -51,6 +51,7 @@ app.include_router(predictions.router)
 app.include_router(watchlist.router)
 app.include_router(auth.router)
 app.include_router(chat.router)
+app.include_router(portfolio.router)
 
 
 @app.get("/")
