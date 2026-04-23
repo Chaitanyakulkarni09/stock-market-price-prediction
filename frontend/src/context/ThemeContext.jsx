@@ -12,8 +12,10 @@ export function ThemeProvider({ children }) {
     const html = document.documentElement
     if (isDark) {
       html.classList.add('dark')
+      document.body.classList.remove('light')
     } else {
       html.classList.remove('dark')
+      document.body.classList.add('light')
     }
     localStorage.setItem('theme', isDark ? 'dark' : 'light')
   }, [isDark])

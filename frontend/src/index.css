@@ -221,4 +221,21 @@
     0%   { background-position: -200% 0; }
     100% { background-position:  200% 0; }
   }
+
+  /* ── Light mode explicit overrides ── */
+  body.light {
+    background: linear-gradient(135deg, #e8f4fd 0%, #dbeafe 50%, #e0f2fe 100%);
+    color: #0f172a;
+  }
+  body.light h1, body.light h2, body.light h3 {
+    color: #0f172a;
+  }
+  body.light .text-muted {
+    color: #64748b;
+  }
+  /* Light mode select/option readable */
+  body.light select option {
+    background: #ffffff;
+    color: #0f172a;
+  }
 }
