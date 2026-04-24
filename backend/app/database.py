@@ -30,11 +30,18 @@ if "aivencloud.com" in database_url:
                 "ssl_mode": "REQUIRED"
             }
         },
-        pool_pre_ping=True,
-        pool_recycle=3600,
+        pool_pre_ping=True,      # Checks connection before using it
+        pool_recycle=300,        # Recycle connections every 5 minutes (Aiven free tier idle timeout)
+        pool_size=5,             # Max connections in pool
+        max_overflow=10,         # Extra connections if needed
+        echo_pool=False,         # Set to True for debugging connection pool issues
     )
 else:
-    engine = create_engine(database_url, pool_pre_ping=True)
+    engine = create_engine(
+        database_url, 
+        pool_pre_ping=True,
+        pool_recycle=300,
+    )
 
 # Create the session and the correct declarative base
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
