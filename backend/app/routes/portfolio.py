@@ -9,6 +9,7 @@ from typing import List, Optional
 from itertools import combinations
 
 from app.services.predict_service import get_prediction_change, get_current_price
+from concurrent.futures import ThreadPoolExecutor, as_completed
 
 router = APIRouter(prefix="/api/portfolio", tags=["portfolio"])
 
@@ -43,18 +44,22 @@ _FALLBACK_PRICES = {
 RISK_MAP = {"low": (1, 4), "medium": (3, 6), "high": (5, 10)}
 
 
+def _fetch_one(meta: dict) -> dict:
+    sym = meta["symbol"]
+    live_price = get_current_price(sym)
+    price = live_price if (live_price and live_price > 0) else _FALLBACK_PRICES.get(sym, 1000)
+    expected_return = get_prediction_change(sym)
+    return {**meta, "price": price, "expected_return": expected_return}
+
+
 def _build_universe() -> list:
-    """Fetch live prices + real ML predictions for all stocks."""
-    universe = []
-    for meta in _STOCK_META:
-        sym = meta["symbol"]
-        # Live price — fall back to mock if fetch fails
-        live_price = get_current_price(sym)
-        price = live_price if (live_price and live_price > 0) else _FALLBACK_PRICES.get(sym, 1000)
-        # Real ML prediction (change_percent, e.g. 1.5 or -0.8)
-        expected_return = get_prediction_change(sym)
-        universe.append({**meta, "price": price, "expected_return": expected_return})
-    return universe
+    """Fetch live prices + real ML predictions concurrently for all stocks."""
+    results = [None] * len(_STOCK_META)
+    with ThreadPoolExecutor(max_workers=8) as ex:
+        futures = {ex.submit(_fetch_one, meta): i for i, meta in enumerate(_STOCK_META)}
+        for future in as_completed(futures):
+            results[futures[future]] = future.result()
+    return results
 
 
 class ConstraintRequest(BaseModel):

@@ -34,7 +34,13 @@ export const deleteAccount = ()                     => api.delete('/api/auth/del
 export const saveChat        = (user_message, bot_response) => api.post('/api/chat/save',    { user_message, bot_response }).then(r => r.data)
 export const getChatHistory  = ()                           => api.get('/api/chat/history').then(r => r.data)
 
-// ── Portfolio CSP solver ──────────────────────────────────────────────────────
-export const getConstrainedPortfolios = (constraints) => api.post('/api/portfolio/constraints', constraints).then(r => r.data)
+// ── Portfolio CSP solver — uses longer timeout (parallel predictions) ─────────
+const portfolioApi = axios.create({ baseURL: BASE, timeout: 90000 })
+portfolioApi.interceptors.request.use(config => {
+  const token = localStorage.getItem('token')
+  if (token) config.headers.Authorization = `Bearer ${token}`
+  return config
+})
+export const getConstrainedPortfolios = (constraints) => portfolioApi.post('/api/portfolio/constraints', constraints).then(r => r.data)
 
 export default api
