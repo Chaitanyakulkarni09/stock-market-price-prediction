@@ -226,3 +226,13 @@ def predict_price(symbol: str) -> PredictionResponse:
 
 
 predict = predict_price
+
+
+def get_prediction_change(symbol: str) -> float:
+    """Return predicted change_percent (e.g. 1.5 for +1.5%, -0.8 for -0.8%).
+    Used by the Portfolio CSP solver. Returns 0.0 on any failure."""
+    try:
+        result = predict_price(symbol)
+        return round(float(result.change_percent), 2)
+    except Exception:
+        return 0.0
