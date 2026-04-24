@@ -1,3 +1,5 @@
+import logging
+import traceback
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
@@ -12,8 +14,13 @@ from app.services.predict_service import load_all_models
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    Base.metadata.create_all(bind=engine)
-    print("[DB] All tables created/verified.")
+    try:
+        Base.metadata.create_all(bind=engine)
+        print("[DB] All tables created/verified.")
+    except Exception as e:
+        logging.error(f"[DB] Error during database initialization: {e}")
+        logging.error(traceback.format_exc())
+    
     load_all_models()
     yield
 

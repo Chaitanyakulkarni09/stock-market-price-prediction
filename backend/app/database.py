@@ -9,16 +9,17 @@ database_url = settings.database_url
 
 # Handle Aiven MySQL SSL requirement
 if "aivencloud.com" in database_url:
-    # Remove any existing query parameters (like ?ssl-mode=REQUIRED)
+    # Remove ?ssl-mode=REQUIRED from the URL if present
     if "?" in database_url:
         database_url = database_url.split("?")[0]
     
-    # Create engine with SSL connect_args for PyMySQL
+    # Create engine with SSL connect_args for Aiven MySQL
+    # Using check_hostname=False and ssl_mode="REQUIRED" as a fallback
     engine = create_engine(
         database_url,
         connect_args={
             "ssl": {
-                "check_hostname": False,   # Disable hostname verification (safe for Aiven)
+                "check_hostname": False,
                 "ssl_mode": "REQUIRED"
             }
         },
