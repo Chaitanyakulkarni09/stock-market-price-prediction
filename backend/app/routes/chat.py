@@ -1,12 +1,26 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
+from pydantic import BaseModel
 from app.database import get_db
 from app.models.chat_history import ChatHistory
 from app.schemas.auth import ChatSaveRequest
 from app.routes.auth import get_current_user
 from app.models.user import User
+from app.services.chatbot_service import generate_chat_response
 
 router = APIRouter(prefix="/api/chat", tags=["chat"])
+
+class ChatbotRequest(BaseModel):
+    message: str
+
+@router.post("/bot")
+async def get_chatbot_reply(
+    payload: ChatbotRequest,
+    current_user: User = Depends(get_current_user),
+):
+    reply = await generate_chat_response(payload.message)
+    return {"reply": reply}
+
 
 
 @router.post("/save")

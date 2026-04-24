@@ -1,32 +1,8 @@
 import { useState, useRef, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Send, Bot, User, FlaskConical, RotateCcw, ThumbsUp, ThumbsDown } from 'lucide-react'
-import { saveChat } from '../api/api'
+import { saveChat, getChatbotResponse } from '../api/api'
 import { useAuth } from '../context/AuthContext'
-
-const KB = {
-  'nifty': 'NIFTY 50 is the flagship index of the National Stock Exchange (NSE) of India. It tracks the performance of the top 50 large-cap companies listed on NSE, representing about 13 sectors of the Indian economy.',
-  'sensex': 'SENSEX (Sensitive Index) is the benchmark index of the Bombay Stock Exchange (BSE). It tracks 30 financially sound and well-established companies listed on BSE.',
-  'rsi': 'RSI (Relative Strength Index) is a momentum oscillator that measures the speed and magnitude of price changes. Values above 70 indicate overbought conditions, while values below 30 indicate oversold conditions.',
-  'macd': 'MACD (Moving Average Convergence Divergence) is a trend-following momentum indicator. It shows the relationship between two exponential moving averages (12-day and 26-day EMA).',
-  'prediction': 'Our AI prediction system uses a Random Forest ML model trained on historical data from January 2010 to December 2023. It uses 19 technical features including Moving Averages, RSI, MACD, Bollinger Bands, ATR, OBV, and Volume indicators.',
-  'random forest': 'Random Forest is an ensemble learning method that builds multiple decision trees and merges them for more accurate predictions. It reduces overfitting and handles non-linear relationships in stock data well.',
-  'moving average': "A Moving Average smooths out price data by creating a constantly updated average price. When short-term MA crosses above long-term MA, it's a bullish signal (Golden Cross).",
-  'bollinger': 'Bollinger Bands consist of a middle band (20-day MA) and two outer bands (±2 standard deviations). Upper band = overbought, lower band = oversold.',
-  'reliance': "Reliance Industries (RELIANCE.NS) is India's largest company by market cap. It operates in petrochemicals, refining, oil, telecom (Jio), and retail.",
-  'infy': "Infosys (INFY.NS) is one of India's largest IT services companies. It provides consulting, technology, and outsourcing services globally.",
-  'dataset': 'Our ML models are trained on historical stock data from January 2010 to December 2023 — covering 14 years including bull runs, corrections, and the COVID-19 crash.',
-  'hello': "Hello! I'm your AI stock market assistant. Ask me about NIFTY, SENSEX, RSI, MACD, stock predictions, or any of the stocks we track!",
-  'hi': 'Hi there! How can I help you with stock market insights today?',
-}
-
-function getBotReply(msg) {
-  const lower = msg.toLowerCase()
-  for (const [key, val] of Object.entries(KB)) {
-    if (lower.includes(key)) return val
-  }
-  return "I can help with NIFTY, SENSEX, RSI, MACD, Moving Averages, Bollinger Bands, stock predictions, and individual stocks like Reliance, Infosys, HDFC Bank, Maruti, and HUL."
-}
 
 const SUGGESTIONS = ['What is Nifty?', 'Explain RSI', 'What is MACD?', 'How does prediction work?', 'Tell me about the dataset']
 
@@ -130,8 +106,16 @@ export default function Chatbot() {
     setInput('')
     setMessages(prev => [...prev, { id: Date.now(), role: 'user', text: msg }])
     setTyping(true)
-    await new Promise(r => setTimeout(r, 600 + Math.random() * 500))
-    const reply = getBotReply(msg)
+    
+    let reply = ""
+    try {
+      const data = await getChatbotResponse(msg)
+      reply = data.reply
+    } catch (error) {
+      console.error('Chatbot API error:', error.response?.status, error.response?.data);
+      reply = `Error: ${error.response?.status || 'Network'} - ${error.response?.data?.detail || error.message}`;
+    }
+
     setTyping(false)
     setMessages(prev => [...prev, { id: Date.now() + 1, role: 'bot', text: reply }])
     saveChat(msg, reply).catch(() => {})
@@ -154,6 +138,19 @@ export default function Chatbot() {
         <p className="text-sm text-slate-500 dark:text-slate-400 mt-0.5">
           Ask anything about stocks, indices, and market concepts
         </p>
+      </div>
+
+      {/* Turing Test Info */}
+      <div className="mb-6 p-4 rounded-2xl bg-purple-500/10 border border-purple-500/20 flex items-start gap-3">
+        <div className="w-8 h-8 rounded-lg bg-purple-500/20 flex items-center justify-center flex-shrink-0">
+          <FlaskConical size={16} className="text-purple-500" />
+        </div>
+        <div>
+          <p className="text-sm font-semibold text-purple-700 dark:text-purple-400">🧪 Turing Test Active</p>
+          <p className="text-xs text-purple-600/80 dark:text-purple-400/70 mt-0.5">
+            After each response, rate whether it sounds human or machine. Your feedback helps evaluate our AI.
+          </p>
+        </div>
       </div>
 
       {/* Turing Test Panel */}

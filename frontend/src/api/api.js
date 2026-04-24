@@ -33,6 +33,7 @@ export const deleteAccount = ()                     => api.delete('/api/auth/del
 // ── Chat — user resolved from JWT on backend ──────────────────────────────────
 export const saveChat        = (user_message, bot_response) => api.post('/api/chat/save',    { user_message, bot_response }).then(r => r.data)
 export const getChatHistory  = ()                           => api.get('/api/chat/history').then(r => r.data)
+export const getChatbotResponse = (message)                 => api.post('/api/chat/bot',     { message }).then(r => r.data)
 
 // ── Portfolio CSP solver — uses longer timeout (parallel predictions) ─────────
 const portfolioApi = axios.create({ baseURL: BASE, timeout: 90000 })
