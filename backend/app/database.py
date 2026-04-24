@@ -12,21 +12,33 @@ except ImportError:
 
 settings = get_settings()
 
-# Get the database URL from settings; it should be in the standard format, e.g.:
+# Get the database URL from settings; it should be in the format:
 # mysql+pymysql://avnadmin:password@host:15369/defaultdb
 database_url = settings.database_url
 
-# Create the engine with connection pooling and keep-alive features
-engine = create_engine(
-    database_url,
-    pool_pre_ping=True,      # Check connection's liveness before using it
-    pool_recycle=3600,       # Recycle connections after 1 hour to prevent stale connections
-)
+# Remove ?ssl-mode=REQUIRED from the URL if present, to avoid a driver error
+if "?" in database_url:
+    database_url = database_url.split("?")[0]
 
+# Configure the engine for Aiven MySQL
+if "aivencloud.com" in database_url:
+    engine = create_engine(
+        database_url,
+        connect_args={
+            "ssl": {
+                "check_hostname": False,
+                "ssl_mode": "REQUIRED"
+            }
+        },
+        pool_pre_ping=True,
+        pool_recycle=3600,
+    )
+else:
+    engine = create_engine(database_url, pool_pre_ping=True)
+
+# Create the session and the correct declarative base
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
-
-class Base(declarative_base()):
-    pass
+Base = declarative_base()
 
 def get_db():
     db = SessionLocal()
