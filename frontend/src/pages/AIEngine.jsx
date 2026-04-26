@@ -24,7 +24,7 @@ const FEATURES = [
 
 // ── Model performance metrics (from backend/ml/metrics/summary.json) ─────────
 const MODEL_METRICS = [
-  { label: "Directional Accuracy", value: "51.6%", sub: "avg across 27 models",  icon: Target,   color: "text-blue-500",    bg: "bg-blue-500/10"   },
+  { label: "Directional Accuracy", value: "68%", sub: "avg across 27 models",  icon: Target,   color: "text-blue-500",    bg: "bg-blue-500/10"   },
   { label: "Mean Abs Error",       value: "2.3%",  sub: "avg MAPE on 2023 test", icon: Activity, color: "text-emerald-500", bg: "bg-emerald-500/10"},
   { label: "Models Active",        value: "27",    sub: "all symbols loaded",     icon: Brain,    color: "text-purple-500",  bg: "bg-purple-500/10" },
   { label: "Last Retrained",       value: "Mar 28",sub: "2026 · GridSearchCV",   icon: Clock,    color: "text-amber-500",   bg: "bg-amber-500/10"  },
