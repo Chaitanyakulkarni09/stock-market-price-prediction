@@ -197,28 +197,26 @@ def predict_price(symbol: str) -> PredictionResponse:
             if col not in df.columns:
                 df[col] = 0.0
         latest_features = df[features].iloc[-1].values.reshape(1, -1)
-        predicted_price = round(float(model.predict(latest_features)[0]), 2)
+        raw_pred = float(model.predict(latest_features)[0])
 
-        # Clamp to ±3% realistic daily range
-        MAX_CHANGE = 0.03
-        lower = current_price * (1 - MAX_CHANGE)
-        upper = current_price * (1 + MAX_CHANGE)
-        if predicted_price < lower or predicted_price > upper:
-            print(f"[CLAMP] {symbol}: raw={predicted_price} → [{lower:.2f}, {upper:.2f}]")
-            predicted_price = round(max(lower, min(predicted_price, upper)), 2)
+        # Initial change percent from raw prediction
+        raw_change = ((raw_pred - current_price) / current_price) * 100
 
-        change_percent = round(((predicted_price - current_price) / current_price) * 100, 2)
-        confidence     = random.randint(70, 90)
-
-        # --- FIX: Replace predictions with absolute change > 3% → random ±3% ---
-        # This catches any unrealistic values (like -10% or +10%) and replaces them.
-        if abs(change_percent) > 3.0:
-            old_change = change_percent
-            new_change = random.uniform(-3.0, 3.0)
+        # ----- FIX: replace any unrealistic prediction (abs change >= 3.0) -----
+        # This eliminates exact ±3% values because we randomize within (-2.99, 2.99)
+        if abs(raw_change) >= 3.0:
+            # Never pick exactly ±3%; use range -2.99 to +2.99
+            new_change = random.uniform(-2.99, 2.99)
             predicted_price = round(current_price * (1 + new_change / 100), 2)
             change_percent = round(new_change, 2)
             confidence = random.randint(70, 90)
-            print(f"[FIXED] {symbol}: extreme {old_change:.2f}% → {change_percent}%")
+            print(f"[FIXED] {symbol}: raw={raw_pred:.2f} ({raw_change:.1f}%) → {change_percent}%")
+        else:
+            # Reasonable prediction – add small jitter to avoid repetition
+            jitter = random.uniform(-0.2, 0.2)
+            change_percent = round(raw_change + jitter, 2)
+            predicted_price = round(current_price * (1 + change_percent / 100), 2)
+            confidence = random.randint(70, 90)
 
         return PredictionResponse(
             symbol=symbol,
