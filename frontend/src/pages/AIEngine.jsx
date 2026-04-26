@@ -4,7 +4,7 @@ import {
   Brain, TrendingUp, TrendingDown, ChevronDown,
   Activity, CheckCircle, AlertCircle, Clock,
   ChevronRight, Zap, BarChart2, Target, Info,
-  GitBranch, Table2, Play, RotateCcw,
+  GitBranch, Table2, Play, RotateCcw, BookOpen, Eye, Cpu,
 } from "lucide-react";
 import { getPrediction, getStockQuote } from "../api/api";
 import { ALL_SYMBOLS, SYMBOL_MAP, getDisplayName } from "../utils/symbols";
@@ -331,25 +331,186 @@ function BFSDFSVisualizer() {
   );
 }
 
+// ── Intelligent Agent Panel ───────────────────────────────────────────────────
+function IntelligentAgentPanel() {
+  const cycle = [
+    {
+      step: "01", label: "Perceive",
+      icon: Eye, color: "text-blue-500", bg: "bg-blue-500/10",
+      desc: "Fetches live OHLCV data for the selected stock via Yahoo Finance. Computes 19 technical indicators: RSI, MACD, Bollinger Bands, ATR, OBV, MA5–MA50, Momentum.",
+    },
+    {
+      step: "02", label: "Reason",
+      icon: Brain, color: "text-purple-500", bg: "bg-purple-500/10",
+      desc: "Passes the feature vector through a trained Random Forest Regressor. Fires production rules (IF RSI < 30 AND Volume > Avg → BUY) via forward chaining to generate a trading signal.",
+    },
+    {
+      step: "03", label: "Act",
+      icon: Zap, color: "text-emerald-500", bg: "bg-emerald-500/10",
+      desc: "Returns a predicted next-day price, a BUY/SELL/HOLD signal, and a confidence score. The agent aims to maximise prediction accuracy as its performance measure.",
+    },
+  ];
+
+  return (
+    <div className="card">
+      <div className="flex items-center gap-2 mb-4">
+        <div className="w-8 h-8 rounded-xl bg-purple-500/10 flex items-center justify-center">
+          <Cpu size={15} className="text-purple-500" />
+        </div>
+        <div>
+          <h2 className="font-semibold text-slate-900 dark:text-white text-sm">Intelligent Agent — Perceive · Reason · Act</h2>
+          <p className="text-[10px] text-slate-400">The prediction system as a rational agent</p>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-4">
+        {cycle.map((c, i) => (
+          <div key={c.step} className="relative">
+            <div className={`p-4 rounded-xl border border-slate-200 dark:border-slate-700/40 bg-slate-50 dark:bg-slate-800/40 h-full`}>
+              <div className={`w-9 h-9 rounded-xl ${c.bg} flex items-center justify-center mb-3`}>
+                <c.icon size={16} className={c.color} />
+              </div>
+              <p className={`text-xs font-black mb-1 ${c.color}`}>{c.step} {c.label}</p>
+              <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">{c.desc}</p>
+            </div>
+            {i < 2 && (
+              <div className="hidden sm:flex absolute -right-1.5 top-1/2 -translate-y-1/2 z-10
+                w-3 h-3 rounded-full bg-slate-300 dark:bg-slate-600 items-center justify-center">
+                <ChevronRight size={8} className="text-slate-500" />
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
+
+      <div className="p-3 rounded-xl bg-purple-500/5 border border-purple-500/15 text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
+        <span className="font-semibold text-purple-500">PEAS Framework: </span>
+        Performance (prediction accuracy) · Environment (NSE/BSE market data) · Actuators (BUY/SELL/HOLD signals) · Sensors (Yahoo Finance API, technical indicators).
+        This makes the system a goal-based, model-based intelligent agent.
+      </div>
+    </div>
+  );
+}
+
+// ── Knowledge Base Viewer ─────────────────────────────────────────────────────
+const KB_ENTRIES = [
+  { category: "Trading Rules", color: "emerald", items: [
+    { rule: "IF RSI < 30 AND Volume > Avg", conclusion: "→ BUY", type: "AND" },
+    { rule: "IF MACD Bullish OR Golden Cross", conclusion: "→ BUY", type: "OR" },
+    { rule: "IF RSI > 70 AND Volume Spike", conclusion: "→ SELL", type: "AND" },
+    { rule: "IF MACD Bearish AND Price < MA20", conclusion: "→ SELL", type: "AND" },
+  ]},
+  { category: "Market Facts", color: "blue", items: [
+    { rule: "RSI < 30", conclusion: "Oversold condition", type: "FACT" },
+    { rule: "RSI > 70", conclusion: "Overbought condition", type: "FACT" },
+    { rule: "MA20 > MA50", conclusion: "Golden Cross (bullish)", type: "FACT" },
+    { rule: "MA20 < MA50", conclusion: "Death Cross (bearish)", type: "FACT" },
+  ]},
+  { category: "Agent Goals", color: "purple", items: [
+    { rule: "Maximise directional accuracy", conclusion: "Performance measure", type: "GOAL" },
+    { rule: "Minimise MAPE", conclusion: "Error metric < 3%", type: "GOAL" },
+    { rule: "Confidence ≥ 70%", conclusion: "Signal threshold", type: "GOAL" },
+    { rule: "Predict within ±3%", conclusion: "Realistic range cap", type: "GOAL" },
+  ]},
+];
+
+function KnowledgeBaseViewer() {
+  const [open, setOpen] = useState(false);
+  const colorMap = { emerald: "text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 border-emerald-500/20",
+    blue: "text-blue-600 dark:text-blue-400 bg-blue-500/10 border-blue-500/20",
+    purple: "text-purple-600 dark:text-purple-400 bg-purple-500/10 border-purple-500/20" };
+  const badgeMap = { AND: "bg-blue-500/10 text-blue-500", OR: "bg-amber-500/10 text-amber-500",
+    FACT: "bg-slate-100 dark:bg-slate-700 text-slate-500", GOAL: "bg-purple-500/10 text-purple-500" };
+
+  return (
+    <div className="card">
+      <button onClick={() => setOpen(p => !p)} className="w-full flex items-center justify-between">
+        <div className="flex items-center gap-2.5">
+          <div className="w-8 h-8 rounded-xl bg-emerald-500/10 flex items-center justify-center">
+            <BookOpen size={15} className="text-emerald-500" />
+          </div>
+          <div className="text-left">
+            <span className="font-semibold text-slate-900 dark:text-white text-sm block">Knowledge Base</span>
+            <span className="text-[10px] text-slate-400">Trading rules · market facts · agent goals</span>
+          </div>
+        </div>
+        <motion.div animate={{ rotate: open ? 90 : 0 }} transition={{ duration: 0.2 }}>
+          <ChevronRight size={16} className="text-slate-400" />
+        </motion.div>
+      </button>
+
+      <AnimatePresence>
+        {open && (
+          <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.25 }} style={{ overflow: "hidden" }}>
+            <div className="mt-4 space-y-4">
+              {KB_ENTRIES.map(cat => (
+                <div key={cat.category}>
+                  <p className={`text-[10px] font-black uppercase tracking-widest mb-2 ${colorMap[cat.color].split(' ')[0]}`}>
+                    {cat.category}
+                  </p>
+                  <div className="space-y-1.5">
+                    {cat.items.map((item, i) => (
+                      <div key={i} className={`flex items-center justify-between p-2.5 rounded-xl border text-xs ${colorMap[cat.color]}`}>
+                        <span className="font-mono">{item.rule}</span>
+                        <div className="flex items-center gap-2 shrink-0 ml-2">
+                          <span className={`px-1.5 py-0.5 rounded-md text-[10px] font-bold ${badgeMap[item.type]}`}>{item.type}</span>
+                          <span className="font-semibold">{item.conclusion}</span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+}
+
 // ── Propositional Logic Truth Table ──────────────────────────────────────────
 const RULES = [
   {
     id: "r1",
-    label: "Rule 1 (AND)",
+    label: "Rule 1 — BUY (AND)",
     formula: "(RSI < 30) ∧ (Volume > Avg) → BUY",
-    desc: "Both conditions must be true for a BUY signal. This is a conservative rule requiring oversold RSI AND high volume confirmation.",
+    desc: "Both conditions must be true. Conservative rule requiring oversold RSI AND high volume confirmation.",
     premises: ["RSI < 30", "Volume > Avg"],
     evaluate: (a, b) => a && b,
     conclusion: "BUY",
+    conclusionColor: "emerald",
   },
   {
     id: "r2",
-    label: "Rule 2 (OR)",
+    label: "Rule 2 — BUY (OR)",
     formula: "(MACD Bullish) ∨ (Golden Cross) → BUY",
-    desc: "Either condition alone is sufficient for a BUY signal. More aggressive — triggers on any bullish momentum indicator.",
+    desc: "Either condition alone is sufficient. More aggressive — triggers on any bullish momentum indicator.",
     premises: ["MACD Bullish", "Golden Cross"],
     evaluate: (a, b) => a || b,
     conclusion: "BUY",
+    conclusionColor: "emerald",
+  },
+  {
+    id: "r3",
+    label: "Rule 3 — SELL (AND)",
+    formula: "(RSI > 70) ∧ (Volume Spike) → SELL",
+    desc: "Overbought RSI with a volume spike signals strong selling pressure. Both must be true.",
+    premises: ["RSI > 70", "Volume Spike"],
+    evaluate: (a, b) => a && b,
+    conclusion: "SELL",
+    conclusionColor: "red",
+  },
+  {
+    id: "r4",
+    label: "Rule 4 — SELL (AND)",
+    formula: "(MACD Bearish) ∧ (Price < MA20) → SELL",
+    desc: "Bearish MACD crossover combined with price below the 20-day moving average confirms a downtrend.",
+    premises: ["MACD Bearish", "Price < MA20"],
+    evaluate: (a, b) => a && b,
+    conclusion: "SELL",
+    conclusionColor: "red",
   },
 ];
 
@@ -416,6 +577,18 @@ function PropositionalLogic() {
 
   const handleRuleChange = (id) => { setActiveRule(id); setP1(false); setP2(false); };
 
+  const conclusionStyles = {
+    emerald: {
+      active: "bg-emerald-500/15 border-emerald-500/30 text-emerald-600 dark:text-emerald-400 shadow-md shadow-emerald-500/10",
+      badge: "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400",
+    },
+    red: {
+      active: "bg-red-500/15 border-red-500/30 text-red-600 dark:text-red-400 shadow-md shadow-red-500/10",
+      badge: "bg-red-500/10 text-red-600 dark:text-red-400",
+    },
+  };
+  const cs = conclusionStyles[rule.conclusionColor];
+
   return (
     <div className="card">
       <div className="flex items-center gap-2 mb-4">
@@ -423,27 +596,32 @@ function PropositionalLogic() {
           <Table2 size={15} className="text-indigo-500" />
         </div>
         <div>
-          <h2 className="font-semibold text-slate-900 dark:text-white text-sm">Propositional Logic — Trading Rules</h2>
-          <p className="text-[10px] text-slate-400">Interactive truth table · toggle premises to see conclusion</p>
+          <h2 className="font-semibold text-slate-900 dark:text-white text-sm">Production System — Trading Rules</h2>
+          <p className="text-[10px] text-slate-400">4 IF-THEN rules · interactive truth table · forward chaining</p>
         </div>
       </div>
 
       {/* Rule selector */}
-      <div className="flex gap-2 mb-4">
+      <div className="flex flex-wrap gap-2 mb-4">
         {RULES.map(r => (
           <button key={r.id} onClick={() => handleRuleChange(r.id)}
             className={`px-3 py-1.5 rounded-xl text-xs font-semibold border transition-all
               ${activeRule === r.id
-                ? "bg-indigo-600 border-indigo-500 text-white"
+                ? r.conclusionColor === "emerald"
+                  ? "bg-emerald-600 border-emerald-500 text-white"
+                  : "bg-red-600 border-red-500 text-white"
                 : "bg-white dark:bg-slate-800/60 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:border-indigo-400"}`}>
             {r.label}
           </button>
         ))}
       </div>
 
+      {/* Rule description */}
+      <p className="text-xs text-slate-500 dark:text-slate-400 mb-3 leading-relaxed">{rule.desc}</p>
+
       {/* Formula */}
       <div className="bg-slate-900/60 dark:bg-slate-900/80 rounded-xl px-4 py-3 font-mono text-xs mb-4 border border-slate-700/40">
-        <span className="text-slate-400">{"// Logical rule"}</span>
+        <span className="text-slate-400">{"// Production rule (IF-THEN)"}</span>
         <br />
         <span className="text-amber-300">{rule.formula}</span>
       </div>
@@ -467,10 +645,8 @@ function PropositionalLogic() {
           {/* Conclusion */}
           <motion.div animate={{ scale: result ? 1.02 : 1 }}
             className={`p-3 rounded-xl border text-center font-black text-sm transition-all
-              ${result
-                ? "bg-emerald-500/15 border-emerald-500/30 text-emerald-600 dark:text-emerald-400 shadow-md shadow-emerald-500/10"
-                : "bg-slate-100 dark:bg-slate-800/40 border-slate-200 dark:border-slate-700/40 text-slate-400"}`}>
-            {result ? `✓ ${rule.conclusion} Signal` : `✗ No ${rule.conclusion} Signal`}
+              ${result ? cs.active : "bg-slate-100 dark:bg-slate-800/40 border-slate-200 dark:border-slate-700/40 text-slate-400"}`}>
+            {result ? `✓ ${rule.conclusion} Signal Fired` : `✗ Rule not triggered`}
           </motion.div>
         </div>
 
@@ -483,9 +659,8 @@ function PropositionalLogic() {
 
       <div className="p-3 rounded-xl bg-indigo-500/5 border border-indigo-500/15 text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
         <span className="font-semibold text-indigo-500">Forward Chaining: </span>
-        In propositional logic, we start from known facts (premises) and apply rules to derive conclusions.
-        Here, the agent infers a {rule.conclusion} signal when the logical condition{" "}
-        <span className="font-mono text-amber-500">{rule.formula.split("→")[0].trim()}</span> is satisfied.
+        The inference engine starts from known market facts (premises) and fires rules whose conditions are satisfied.
+        Rule: <span className="font-mono text-amber-500">{rule.formula.split("→")[0].trim()}</span> → conclusion: <span className={`font-bold ${cs.badge.split(' ')[1]}`}>{rule.conclusion}</span>.
       </div>
     </div>
   );
@@ -709,11 +884,17 @@ export default function AIEngine() {
       {/* How it works */}
       <HowItWorks />
 
+      {/* Intelligent Agent */}
+      <IntelligentAgentPanel />
+
       {/* BFS / DFS Visualizer */}
       <BFSDFSVisualizer />
 
-      {/* Propositional Logic Truth Table */}
+      {/* Propositional Logic / Production Rules */}
       <PropositionalLogic />
+
+      {/* Knowledge Base Viewer */}
+      <KnowledgeBaseViewer />
 
     </motion.div>
   );
