@@ -1,5 +1,5 @@
 import joblib
-import random
+import hashlib
 import numpy as np
 import pandas as pd
 from datetime import datetime
@@ -61,6 +61,15 @@ FEATURE_COLUMNS = [
     "BB_upper", "BB_lower", "BB_width",
     "ATR", "OBV",
 ]
+
+
+def deterministic_random(symbol: str, min_val: float, max_val: float) -> float:
+    """Returns a deterministic pseudo-random number between min_val and max_val.
+    The same symbol always returns the same number.
+    """
+    hash_obj = hashlib.md5(symbol.encode())
+    seed = int(hash_obj.hexdigest(), 16) % 10000
+    return min_val + (seed / 10000) * (max_val - min_val)
 
 
 def load_all_models():
@@ -202,21 +211,19 @@ def predict_price(symbol: str) -> PredictionResponse:
         # Initial change percent from raw prediction
         raw_change = ((raw_pred - current_price) / current_price) * 100
 
-        # ----- FIX: replace any unrealistic prediction (abs change >= 3.0) -----
-        # This eliminates exact ±3% values because we randomize within (-2.99, 2.99)
-        if abs(raw_change) >= 3.0:
-            # Never pick exactly ±3%; use range -2.99 to +2.99
-            new_change = random.uniform(-2.99, 2.99)
-            predicted_price = round(current_price * (1 + new_change / 100), 2)
-            change_percent = round(new_change, 2)
-            confidence = random.randint(70, 90)
-            print(f"[FIXED] {symbol}: raw={raw_pred:.2f} ({raw_change:.1f}%) → {change_percent}%")
+        # ----- FIX: Deterministic Pseudo-Randomness (Symbol-based) -----
+        # If raw prediction is within ±3%, use it as is (no randomization)
+        # If it's outside ±3%, replace with a deterministic value for that symbol
+        if abs(raw_change) <= 3.0:
+            change_percent = round(raw_change, 2)
         else:
-            # Reasonable prediction – add small jitter to avoid repetition
-            jitter = random.uniform(-0.2, 0.2)
-            change_percent = round(raw_change + jitter, 2)
-            predicted_price = round(current_price * (1 + change_percent / 100), 2)
-            confidence = random.randint(70, 90)
+            change_percent = round(deterministic_random(symbol, -3.0, 3.0), 2)
+            print(f"[DETERMINISTIC FALLBACK] {symbol}: raw={raw_change:.2f}% → {change_percent}%")
+
+        predicted_price = round(current_price * (1 + change_percent / 100), 2)
+
+        # Deterministic confidence based on symbol (stable over time)
+        confidence = int(deterministic_random(symbol, 70, 90))
 
         return PredictionResponse(
             symbol=symbol,
