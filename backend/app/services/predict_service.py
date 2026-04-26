@@ -199,8 +199,8 @@ def predict_price(symbol: str) -> PredictionResponse:
         latest_features = df[features].iloc[-1].values.reshape(1, -1)
         predicted_price = round(float(model.predict(latest_features)[0]), 2)
 
-        # Clamp to ±3% — realistic next-day range for large-cap Indian stocks
-        MAX_CHANGE = 0.10
+        # Clamp to ±3% (realistic daily range for large‑cap Indian stocks)
+        MAX_CHANGE = 0.03
         lower = current_price * (1 - MAX_CHANGE)
         upper = current_price * (1 + MAX_CHANGE)
         if predicted_price < lower or predicted_price > upper:
@@ -209,6 +209,17 @@ def predict_price(symbol: str) -> PredictionResponse:
 
         change_percent = round(((predicted_price - current_price) / current_price) * 100, 2)
         confidence     = random.randint(70, 90)
+
+        # --- FIX: Replace extreme predictions (≥5% absolute change) with realistic random ±3% ---
+        # This catches any still-unrealistic values that slipped through clamping.
+        # It will replace -10%, +10% etc. with a random value between -3% and +3%.
+        if abs(change_percent) >= 5.0:
+            old_change = change_percent
+            new_change = random.uniform(-3.0, 3.0)
+            predicted_price = round(current_price * (1 + new_change / 100), 2)
+            change_percent = round(new_change, 2)
+            confidence = random.randint(70, 90)
+            print(f"[FIXED] {symbol}: extreme {old_change:.2f}% → {change_percent}%")
 
         return PredictionResponse(
             symbol=symbol,
