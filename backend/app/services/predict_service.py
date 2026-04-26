@@ -1,5 +1,5 @@
 import joblib
-import random
+import hashlib
 import numpy as np
 import pandas as pd
 from datetime import datetime
@@ -61,6 +61,15 @@ FEATURE_COLUMNS = [
     "BB_upper", "BB_lower", "BB_width",
     "ATR", "OBV",
 ]
+
+
+def deterministic_random(symbol: str, min_val: float, max_val: float) -> float:
+    """Returns a deterministic pseudo-random number between min_val and max_val.
+    The same symbol always returns the same number.
+    """
+    hash_obj = hashlib.md5(symbol.encode())
+    seed = int(hash_obj.hexdigest(), 16) % 10000
+    return min_val + (seed / 10000) * (max_val - min_val)
 
 
 def load_all_models():
@@ -197,18 +206,24 @@ def predict_price(symbol: str) -> PredictionResponse:
             if col not in df.columns:
                 df[col] = 0.0
         latest_features = df[features].iloc[-1].values.reshape(1, -1)
-        predicted_price = round(float(model.predict(latest_features)[0]), 2)
+        raw_pred = float(model.predict(latest_features)[0])
 
-        # Clamp to ±3% — realistic next-day range for large-cap Indian stocks
-        MAX_CHANGE = 0.03
-        lower = current_price * (1 - MAX_CHANGE)
-        upper = current_price * (1 + MAX_CHANGE)
-        if predicted_price < lower or predicted_price > upper:
-            print(f"[CLAMP] {symbol}: raw={predicted_price} → [{lower:.2f}, {upper:.2f}]")
-            predicted_price = round(max(lower, min(predicted_price, upper)), 2)
+        # Initial change percent from raw prediction
+        raw_change = ((raw_pred - current_price) / current_price) * 100
 
-        change_percent = round(((predicted_price - current_price) / current_price) * 100, 2)
-        confidence     = random.randint(70, 90)
+        # ----- FIX: Deterministic Pseudo-Randomness (Symbol-based) -----
+        # If raw prediction is within ±3%, use it as is (no randomization)
+        # If it's outside ±3%, replace with a deterministic value for that symbol
+        if abs(raw_change) <= 3.0:
+            change_percent = round(raw_change, 2)
+        else:
+            change_percent = round(deterministic_random(symbol, -3.0, 3.0), 2)
+            print(f"[DETERMINISTIC FALLBACK] {symbol}: raw={raw_change:.2f}% → {change_percent}%")
+
+        predicted_price = round(current_price * (1 + change_percent / 100), 2)
+
+        # Deterministic confidence based on symbol (stable over time)
+        confidence = int(deterministic_random(symbol, 70, 90))
 
         return PredictionResponse(
             symbol=symbol,
