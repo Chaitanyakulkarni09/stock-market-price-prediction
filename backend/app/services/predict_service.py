@@ -200,7 +200,7 @@ def predict_price(symbol: str) -> PredictionResponse:
         predicted_price = round(float(model.predict(latest_features)[0]), 2)
 
         # Clamp to ±3% — realistic next-day range for large-cap Indian stocks
-        MAX_CHANGE = 0.03
+        MAX_CHANGE = 0.10
         lower = current_price * (1 - MAX_CHANGE)
         upper = current_price * (1 + MAX_CHANGE)
         if predicted_price < lower or predicted_price > upper:
